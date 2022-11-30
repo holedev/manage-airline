@@ -1,6 +1,8 @@
 from flask import Flask
 from urllib.parse import quote
 import cloudinary
+from flask_login import LoginManager
+from flask_babelex import Babel
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -14,6 +16,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 db = SQLAlchemy(app=app)
 
+# login = LoginManager(app=app)
+
 cloudinary.config(cloud_name='by1410', api_key='334579152917615', api_secret='_zqF24Mo-9RIE3bryU-KzJ1ACBU')
 
+babel = Babel(app=app)
 
+
+@babel.localeselector
+def load_locale():
+    return 'vi'
