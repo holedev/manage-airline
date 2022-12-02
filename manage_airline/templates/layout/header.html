@@ -6,20 +6,37 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <a class="navbar-brand fs-3 fw-bold" href="#">CNPM</a>
-<!--            <ul class="navbar-nav me-auto mb-2 mb-lg-0">-->
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link active" aria-current="page" href="#">Home</a>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" href="#">Link</a>-->
-<!--                </li>-->
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>-->
-<!--                </li>-->
-<!--            </ul>-->
             <div class="d-flex gap-1 ms-auto">
-                <a href="javascript:;" class="btn btn-primary">Đăng nhập</a>
-                <a href="javascript:;" class="btn btn-secondary">Đăng ký</a>
+                {% if current_user.is_authenticated %}
+                <!--                <div class="dropdown">-->
+                <!--                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"-->
+                <!--                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                <!--                        {{ current_user.fullname }}-->
+                <!--                    </button>-->
+                <!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+                <!--                        {% if current_user.user_role == user_role.ADMIN %}-->
+                <!--                        <a href="/admin" class="dropdown-item">Quản lý</a>-->
+                <!--                        {% endif %}-->
+                <!--                        <a href="/logout" class="dropdown-item">Đăng xuất</a>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ current_user.fullname }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {% if current_user.user_role == user_role.ADMIN %}
+                        <a href="/admin" class="dropdown-item">Quản lý</a>
+                        {% endif %}
+                        <a href="/logout" class="dropdown-item">Đăng xuất</a>
+                    </ul>
+                </div>
+                {% else %}
+                <a href="/login" class="btn btn-primary">Đăng nhập</a>
+                <a href="/register" class="btn btn-secondary">Đăng ký</a>
+                {% endif %}
+
             </div>
         </div>
     </div>

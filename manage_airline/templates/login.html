@@ -1,0 +1,39 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="h-100 d-flex align-item-center justify-content-center">
+    <form method="post" action="" style="height: fit-content; min-width: 300px" class="my-auto p-4 bg-white shadow-lg rounded-1">
+        <div class="fs-3 text-primary text-center my-4">Đăng nhập</div>
+        <!-- Username input -->
+        <div class="form-outline mb-2">
+            <label class="form-label" for="username">Tên đăng nhập:</label>
+            <input autofocus type="text" name="username" id="username" class="form-control"/>
+        </div>
+
+        <!-- Password input -->
+        <div class="form-outline mb-4">
+            <label class="form-label" for="password">Mật khẩu:</label>
+            <input type="password" name="password" id="password" class="form-control"/>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="w-100 btn btn-primary btn-block mb-4">Đăng nhập</button>
+
+
+        <!-- Register buttons -->
+        <div class="text-center">
+            <p>Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
+        </div>
+
+        <!-- Options -->
+        <div class="text-center">
+            <div class="mb-2">Hoặc đăng nhập bằng</div>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="" class="btn btn-secondary">Facebook</a>
+                <a href="" class="btn btn-secondary">Google</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
