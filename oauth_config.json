@@ -1,0 +1,16 @@
+{
+  "web": {
+    "client_id": "840656358961-alr1mjqg420ppqinq5d17hvismimb7v1.apps.googleusercontent.com",
+    "project_id": "cnpm-370514",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "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",
+    "redirect_uris": [
+      "http://localhost:5001/callback"
+    ],
+    "javascript_origins": [
+      "https://localhost:5001"
+    ]
+  }
+}

@@ -1,8 +1,10 @@
-from flask import render_template,  request, redirect
-from manage_airline import dao
-from manage_airline.models import UserRole
-from flask_login import login_user, logout_user
+
+from flask import render_template, redirect, session, request
+from manage_airline import dao, db
+from manage_airline.models import UserRole, User
+from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
+from manage_airline import flow
 
 
 def index():
@@ -47,6 +49,28 @@ def register():
     return render_template('register.html', err_msg=err_msg)
 
 
+def login_oauth():
+    authorization_url, state = flow.authorization_url()
+    return redirect(authorization_url)
+
+
+def oauth_callback():
+    user_oauth = dao.get_user_oauth()
+    email = user_oauth['email']
+    user = User.query.filter_by(username=email).first()
+    if user is None:
+        import hashlib
+        password = str(hashlib.md5('123456'.encode('utf-8')).hexdigest())
+        fullname = user_oauth['name']
+        image = user_oauth['picture']
+        user = User(fullname=fullname, username=email, password=password, image=image)
+        db.session.add(user)
+        db.session.commit()
+    login_user(user)
+    return redirect("/")
+
+
 def logout():
     logout_user()
+    session.clear()
     return redirect('/login')

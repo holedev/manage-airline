@@ -11,3 +11,4 @@ def anonymous_user(f):
         return f(*args, **kwargs)
 
     return decorated_func
+
