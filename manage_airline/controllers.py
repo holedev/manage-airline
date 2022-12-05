@@ -1,13 +1,13 @@
-
-from flask import render_template, redirect, session, request
-from manage_airline import dao, db
+from flask import render_template, redirect, session, request, url_for
+from manage_airline import dao, db, flow
 from manage_airline.models import UserRole, User
 from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
-from manage_airline import flow
 
 
 def index():
+    if request.method.__eq__('POST'):
+        return redirect("/flight_list")
     return render_template('index.html')
 
 
@@ -72,5 +72,8 @@ def oauth_callback():
 
 def logout():
     logout_user()
-    session.clear()
     return redirect('/login')
+
+
+def flight_list():
+    return render_template('flightList.html')

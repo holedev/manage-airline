@@ -7,18 +7,17 @@
         <!-- Username input -->
         <div class="form-outline mb-2">
             <label class="form-label" for="username">Tên đăng nhập hoặc email:</label>
-            <input autofocus type="text" name="username" id="username" class="form-control"/>
+            <input required autofocus type="text" name="username" id="username" class="form-control"/>
         </div>
 
         <!-- Password input -->
         <div class="form-outline mb-4">
             <label class="form-label" for="password">Mật khẩu:</label>
-            <input type="password" name="password" id="password" class="form-control"/>
+            <input required type="password" name="password" id="password" class="form-control"/>
         </div>
 
         <!-- Submit button -->
         <button type="submit" class="w-100 btn btn-primary btn-block mb-4">Đăng nhập</button>
-
 
         <!-- Register buttons -->
         <div class="text-center">
@@ -27,9 +26,8 @@
 
         <!-- Options -->
         <div class="text-center">
-            <div class="mb-2">Hoặc đăng nhập bằng</div>
+            <div class="mb-2">Hoặc đăng nhập bằng:</div>
             <div class="d-flex justify-content-center gap-2">
-                <a href="" class="btn btn-secondary">Facebook</a>
                 <a href="/oauth" class="btn btn-secondary">Google</a>
             </div>
         </div>

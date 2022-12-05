@@ -2,6 +2,9 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum,
 from enum import Enum as UserEnum
 from manage_airline import db, app
 from flask_login import UserMixin
+import hashlib
+
+default_password = str(hashlib.md5('123456'.encode('utf-8')).hexdigest())
 
 
 class UserRole(UserEnum):
@@ -18,7 +21,7 @@ class BaseModel(db.Model):
 class User(BaseModel, UserMixin):
     fullname = Column(String(50), nullable=False)
     username = Column(String(50), nullable=False, unique=True)
-    password = Column(String(50), nullable=False)
+    password = Column(String(50), default=default_password)
     image = Column(String(100))
     user_role = Column(Enum(UserRole), default=UserRole.USER)
 
@@ -29,10 +32,6 @@ class User(BaseModel, UserMixin):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-
-        # import hashlib
-        # password = str(hashlib.md5('123456'.encode('utf-8')).hexdigest())
-        #
         # u = User(fullname='ADMIN', username='admin', password=password, user_role=UserRole.ADMIN)
         # db.session.add(u)
         # db.session.commit()

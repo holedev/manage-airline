@@ -1,0 +1,64 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="bg-light d-flex w-100 justify-content-between p-2 rounded-3 shadow-sm mt-4 align-items-center">
+    <div>
+        <div>
+            TPHCM → Hà Nội
+        </div>
+        <div>
+            Tue, 6 Dec 2022 | 1 hành khách | Phổ thông
+        </div>
+    </div>
+    <button class="btn btn-primary">
+        Đổi tìm kiếm
+    </button>
+</div>
+<h3 class="text-center text-uppercase my-4">Danh sách chuyến bay phù hợp</h3>
+<div class="bg-light p-2 shadow-sm rounded-3">
+    <div class="px-3 d-flex justify-content-between align-items-center">
+        <div>
+            <div class="d-flex gap-5 justify-content-between align-items-center">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center">
+                        14:50
+                        <br>
+                        TPHCM
+                    </div>
+                    <div> →</div>
+                    <div class="text-center">
+                        03:00
+                        <br>
+                        Hà Nội
+                    </div>
+                </div>
+                <div>
+                    <div>Trạm dừng: 2</div>
+                    <div>Ước tính: 13h10p</div>
+                </div>
+
+            </div>
+
+        </div>
+        <div>
+            <div>
+                1.302.920 VND / khách
+            </div>
+            <button class="btn w-100 btn-success">Chọn</button>
+        </div>
+    </div>
+    <div class="">
+        <span role="button" class="ps-3 fst-italic" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+                aria-expanded="false" aria-controls="collapseExample">
+            Chi tiết chuyến bay
+        </span>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                Some placeholder content for the collapse component. This panel is hidden by default but revealed when
+                the user activates the relevant trigger.
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
