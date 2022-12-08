@@ -10,7 +10,8 @@ app.add_url_rule('/callback', 'oauth_callback', controllers.oauth_callback)
 app.add_url_rule('/register', 'register', controllers.register, methods=['get', 'post'])
 app.add_url_rule('/logout', 'logout', controllers.logout)
 
-app.add_url_rule('/flight_list', 'flight_list', controllers.flight_list, methods=['get', 'post'])
+app.add_url_rule('/flight_list', 'flight_list', controllers.flight_list, methods=['get'])
+app.add_url_rule('/form_ticket', 'form_ticket', controllers.form_ticket, methods=['get'])
 
 
 @login.user_loader

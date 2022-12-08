@@ -77,3 +77,7 @@ def logout():
 
 def flight_list():
     return render_template('flightList.html')
+
+
+def form_ticket():
+    return render_template('formTicket.html')

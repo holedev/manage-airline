@@ -1,0 +1,101 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="mt-2 ms-2">
+    <h3>Đặt vé</h3>
+    <div class="fst-italic">Điền thông tin và xem lại đặt chỗ.</div>
+</div>
+<div class="mt-4 gap-3 d-flex">
+    <form class="flex-grow-1">
+        <div>
+            <h5 class="ms-2">
+                Thông tin liên hệ
+            </h5>
+            <div class="d-flex gap-4 bg-white p-2 rounded-2">
+                <div class="w-50 mb-3">
+                    <label for="fullname" class="fw-bold form-label">Họ và tên: </label>
+                    <input required type="text" name="fullname" class="form-control" id="fullname">
+                </div>
+                <div class="w-50 mb-3">
+                    <label for="phone" class="fw-bold form-label">Số điện thoại: </label>
+                    <input required type="text" name="phone" class="form-control" id="phone">
+                </div>
+
+            </div>
+        </div>
+        <div class="mt-4">
+            <h5 class="ms-2">
+                Thông tin hành khách <span class="btn btn-primary">+</span>
+            </h5>
+            <p class="text-warning ms-2">Hãy chắc chắn rằng tên của hành khách khớp với tên trên CCCD/CMND/Hộ chiếu/Giấy
+                phép
+                lái xe do chính
+                phủ cấp.
+                Bạn nên tránh sai sót vì một số hãng hàng không cho phép sửa tên sau khi đặt vé.</p>
+            <div class="d-flex gap-4 bg-white p-2 rounded-2">
+                <div class="flex-grow-1 mb-3">
+                    <label for="fullname-1" class="fw-bold form-label">Họ và tên: </label>
+                    <input required type="text" name="fullname-1" class="form-control" id="fullname-1">
+                </div>
+                <div class="flex-grow-1 mb-3">
+                    <label for="phone-1" class="fw-bold form-label">Số điện thoại: </label>
+                    <input required type="text" name="phone-1" class="form-control" id="phone-1">
+                </div>
+                <div class="flex-grow-1 mb-3">
+                    <label for="id-1" class="fw-bold form-label">CMND/CCCD: </label>
+                    <input required type="text" name="id-1" class="form-control" id="id-1">
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <h5 class="ms-2">
+                Thông tin hành lý
+            </h5>
+            <p class="text-warning ms-2">
+                Sao bạn phải cố nhồi nhét? Thêm hành lý để chuyến đi thêm nhẹ nhàng.
+            </p>
+            <div class="d-flex gap-4 bg-white p-2 rounded-2">
+                <div class="flex-grow-1 mb-3">
+                    <label for="package" class="fw-bold form-label">Tổng số kg hành lý: </label>
+                    <input required type="text" name="package" class="form-control" id="package">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4 w-100">Thanh toán</button>
+    </form>
+    <div class="" style="width: 40%">
+        <div style="margin-top: 32px" class="bg-white shadow-sm p-3 rounded-2">
+            <div>
+                <span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                         data-id="IcProductFlightFill"><path fill-rule="evenodd" clip-rule="evenodd"
+                                                             d="M4.24315 18.6216C4.14242 19.2724 4.72762 19.8576 5.37843 19.7569L6.5885 22.177C6.82109 22.6422 7.37143 22.8515 7.85432 22.6583L8.06676 22.5733C8.91113 22.2356 9.42133 21.3707 9.30853 20.4683L9 18L13.2857 14.4286L18.5103 22.2655C18.7901 22.6851 19.3385 22.8308 19.7896 22.6052L20.2243 22.3879C20.6694 22.1653 20.8831 21.6494 20.7257 21.1772L19 16L19.7929 15.2071C20.1834 14.8166 20.1834 14.1834 19.7929 13.7929L19.2071 13.2071C18.8837 12.8838 18.394 12.8282 18.0134 13.0403L17.1493 10.4478L21.8613 4.85221C22.5053 4.08744 22.457 2.95701 21.75 2.25003C21.043 1.54305 19.9126 1.49469 19.1478 2.13871L13.5522 6.85077L10.9597 5.9866C11.1719 5.60602 11.1163 5.11629 10.7929 4.79292L10.2071 4.20713C9.81658 3.81661 9.18342 3.81661 8.79289 4.20713L8 5.00003L2.82279 3.27429C2.35068 3.11692 1.83469 3.33065 1.61213 3.77576L1.39479 4.21044C1.16925 4.66152 1.3149 5.20996 1.73452 5.48971L9.57143 10.7143L6 15L3.53173 14.6915C2.62934 14.5787 1.76445 15.0889 1.4267 15.9333L1.34173 16.1457C1.14857 16.6286 1.35781 17.1789 1.82299 17.4115L4.24315 18.6216Z"
+                                                             fill="#30C5F7"></path></svg>
+                </span>
+                TP HCM → Tokyo
+            </div>
+            <hr>
+            <div class="fw-bold">Chuyến bay đi • Thu, 08 Dec 2022</div>
+            <hr>
+            <div class="fst-italic text-muted">
+                <img src="https://d1785e74lyxkqq.cloudfront.net/_next/static/v2/c/cb44d8f687512efb3aa32c7b6f46d9ab.svg"
+                     width="12" height="12" style="margin-right: 8px; flex-shrink: 0;">
+                Không hoàn tiền
+            </div>
+            <div class="fw-bold fst-italic text-success">
+                <img src="https://d1785e74lyxkqq.cloudfront.net/_next/static/v2/0/0451207408e414bb8a1664153973b3c8.svg"
+                     width="12" height="12" style="margin-right: 8px; flex-shrink: 0;">
+                Có áp dụng đổi lịch bay
+            </div>
+        </div>
+        <div style="margin-top: 32px" class="d-flex justify-content-between align-items-center bg-white shadow-sm p-3 rounded-2">
+            <div>
+                Giá phải trả:
+            </div>
+            <div class="fs-4">
+                6150309 VNĐ
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

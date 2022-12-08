@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime, Time
 from enum import Enum as UserEnum
+from sqlalchemy.orm import relationship, backref
 from manage_airline import db, app
 from flask_login import UserMixin
 import hashlib
@@ -26,7 +27,41 @@ class User(BaseModel, UserMixin):
     user_role = Column(Enum(UserRole), default=UserRole.USER)
 
     def __str__(self):
+        return self.fullname
+
+
+class Airport(BaseModel):
+    name = Column(String(50), nullable=False)
+    flight_sche = relationship('BetweenAirport', backref='airport', lazy=True)
+
+    def __str__(self):
         return self.name
+
+
+class FlightSchedule(BaseModel):
+    __tablename__ = 'flight_sche'
+
+    airport_from = Column(Integer, ForeignKey(Airport.id))
+    airport_to = Column(Integer, ForeignKey(Airport.id))
+
+    time_start = Column(DateTime, nullable=False)
+    time_end = Column(DateTime, nullable=False)
+    quantity_ticket_1st = Column(Integer, nullable=False)
+    quantity_ticket_2nd = Column(Integer, nullable=False)
+
+    bw_airports = relationship('BetweenAirport', backref='flight_sche', lazy=False)
+
+    def __str__(self):
+        return str(self.id)
+
+
+class BetweenAirport(BaseModel):
+    __tablename__ = 'between_airport'
+
+    airport_id = Column(Integer, ForeignKey(Airport.id))
+    flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
+    time_stay = Column(Integer, nullable=False)
+    note = Column(String(100))
 
 
 if __name__ == '__main__':
