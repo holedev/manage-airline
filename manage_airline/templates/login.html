@@ -1,8 +1,17 @@
 {% extends 'layout/base.html' %}
 
 {% block content %}
+{% if error %}
+
+<div class="alert alert-danger">
+    {{ error }}
+</div>
+
+{% endif %}
+
 <div class="h-100 d-flex align-item-center justify-content-center">
-    <form method="post" action="" style="height: fit-content; min-width: 300px" class="my-auto p-4 bg-white shadow-lg rounded-1">
+    <form method="post" action="" style="height: fit-content; min-width: 300px"
+          class="my-auto p-4 bg-white shadow-lg rounded-1">
         <div class="fs-3 text-primary text-center my-4">Đăng nhập</div>
         <!-- Username input -->
         <div class="form-outline mb-2">

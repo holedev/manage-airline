@@ -1,0 +1,116 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<form>
+    <datalist id="airports">
+        {% for a in airport_list %}
+        <option value="{{ a.id }} - {{ a }}">
+        </option>
+        {% endfor %}
+    </datalist>
+    <div class="row my-4">
+        <div class="col-lg-6">
+            <label for="airport-from" class="form-label">Sân bay đi:</label>
+            <input name="airport_from" required type="text" class="form-control" id="airport-from" list="airports">
+        </div>
+        <div class="col-lg-6">
+            <label for="airport-to" class="form-label">Sân bay đến:</label>
+            <input required name="airport_to" type="text" class="form-control" id="airport-to" list="airports">
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-3">
+            <label for="time-start" class="form-label">Thời gian đi:</label>
+            <input required name="time_start" type="datetime-local" class="form-control" id="time-start">
+        </div>
+        <div class="col-lg-3">
+            <label for="time-end" class="form-label">Thời gian đến (dự kiến):</label>
+            <input required name="time_end" type="datetime-local" class="form-control" id="time-end">
+        </div>
+        <div class="col-lg-3">
+            <label for="quantity-1st" class="form-label">Số lượng vé loại 1:</label>
+            <input required name="quantity_1st" value="50" type="number" class="form-control" id="quantity-1st" min="0"
+                   max="100">
+        </div>
+        <div class="col-lg-3">
+            <label for="quantity-2nd" class="form-label">Số lượng vé loại 2:</label>
+            <input required name="quantity_2nd" value="50" type="number" class="form-control" id="quantity-2nd" min="0"
+                   max="100">
+        </div>
+    </div>
+    <div class="row airport-between">
+        <div class="col-lg-3">
+            <label for="airport-bw" class="form-label">Sân bay trung gian:</label>
+            <input name="airport_bw" type="text" class="form-control" id="airport-bw" list="airports">
+        </div>
+        <div class="col-lg-3">
+            <label for="airport-bw-stay" class="form-label">Thời gian dừng (giờ):</label>
+            <input name="airport_bw_stay" min="0" type="number" class="form-control" id="airport-bw-stay">
+        </div>
+        <div class="col-lg-6">
+            <label for="airport-bw-note" class="form-label">Ghi chú:</label>
+            <input name="airport_bw_note" type="text" class="form-control" id="airport-bw-note">
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <div onClick="addAirportBw(2)" class="btn btn-primary mr-3 add-abw">Thêm sân bay trung gian (Còn lại 1)</div>
+        <button class="btn btn-success submit-btn">Tạo lịch chuyến bay</button>
+    </div>
+</form>
+<table class="mt-4 table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Sân đi</th>
+        <th scope="col">Sân đến</th>
+        <th scope="col">Thời gian đi</th>
+        <th scope="col">Thời gian đến</th>
+        <th scope="col">Vé hạng 1</th>
+        <th scope="col">Vé hạng 2</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for f in flight_sche_list %}
+    <tr>
+        <th scope="col">{{f.id}}</th>
+        <th scope="col">{{f.airport_from}}</th>
+        <th scope="col">{{f.airport_to}}</th>
+        <th scope="col">{{f.time_start}}</th>
+        <th scope="col">{{f.time_end}}</th>
+        <th scope="col">{{f.quantity_ticket_1st}}</th>
+        <th scope="col">{{f.quantity_ticket_2nd}}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% block js %}
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<script src="{{ url_for('static', filename='js/flightSche.js') }}"></script>
+<script>
+
+        const rows = document.querySelectorAll('table.table > tbody > tr')
+        const airports = document.querySelectorAll('#airports option')
+
+        const airport_list = []
+        airports.forEach(a => {
+            const obj = {
+                id: a.value.split(" - ")[0],
+                value: a.value.split(" - ")[1],
+            }
+            airport_list.push(obj)
+        })
+
+        rows.forEach(r => {
+            const af = r.querySelector('th:nth-child(2)')
+            const at = r.querySelector('th:nth-child(3)')
+
+            af.innerHTML = airport_list.find(a => a.id == af.innerHTML).value
+            at.innerHTML = airport_list.find(a => a.id == at.innerHTML).value
+        })
+
+</script>
+{% endblock %}
+
+
+{% endblock %}

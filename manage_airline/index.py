@@ -12,6 +12,9 @@ app.add_url_rule('/logout', 'logout', controllers.logout)
 
 app.add_url_rule('/flight_list', 'flight_list', controllers.flight_list, methods=['get'])
 app.add_url_rule('/form_ticket', 'form_ticket', controllers.form_ticket, methods=['get'])
+app.add_url_rule('/pay', 'pay', controllers.pay, methods=['get'])
+
+app.add_url_rule('/api/flight_schedule', 'create_flight_schedule', controllers.create_flight_schedule, methods=['post'])
 
 
 @login.user_loader

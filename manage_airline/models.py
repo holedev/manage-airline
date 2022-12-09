@@ -32,7 +32,6 @@ class User(BaseModel, UserMixin):
 
 class Airport(BaseModel):
     name = Column(String(50), nullable=False)
-    flight_sche = relationship('BetweenAirport', backref='airport', lazy=True)
 
     def __str__(self):
         return self.name

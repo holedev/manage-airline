@@ -1,0 +1,56 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center p-5">
+    <h4 class="mb-3">Thanh toán qua Credit Card</h4>
+    <div class="card-body border col-lg-7 p-0">
+        <p>
+            <a class="btn btn-primary p-2 h-100 d-flex align-items-center justify-content-between"
+               data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="true"
+               aria-controls="collapseExample">
+                <span class="fw-bold">Credit Card</span>
+            </a>
+        </p>
+        <div class="collapse show p-3 pt-0" id="collapseExample">
+            <div class="row">
+                <div class="col-lg-12">
+                    <form action="" class="form">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form__div">
+                                    <label for="card-number" class="form__label">CARD NUMBER</label>
+                                    <input type="text" id="card-number" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
+                                </div>
+                            </div>
+
+                            <div class="col-6 mt-3">
+                                <div class="form__div">
+                                    <label for="mm-yy" class="form__label">MM / YY</label>
+                                    <input type="text" id="mm-yy" class="form-control" placeholder="XX / XX">
+                                </div>
+                            </div>
+
+                            <div class="col-6 mt-3">
+                                <div class="form__div">
+                                    <label for="cvc-code" class="form__label">CVC CODE</label>
+                                    <input type="password" id="cvc-code" class="form-control" placeholder="XXX">
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <div class="form__div">
+                                    <label for="name-card" class="form__label">NAME ON THE CARD</label>
+                                    <input type="text" id="name-card" class="form-control" placeholder=" ">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="mt-4 btn btn-primary w-100">Thanh toán ngay</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

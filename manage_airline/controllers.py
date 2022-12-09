@@ -1,6 +1,6 @@
 from flask import render_template, redirect, session, request, url_for
 from manage_airline import dao, db, flow
-from manage_airline.models import UserRole, User
+from manage_airline.models import UserRole, User, FlightSchedule, BetweenAirport
 from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
 
@@ -25,6 +25,8 @@ def login():
                 return redirect('/admin')
             n = request.args.get('next')
             return redirect(n if n else '/')
+        else:
+            return render_template('login.html', error="Sai tên tài khoản hoặc mật khẩu!")
     return render_template('login.html')
 
 
@@ -81,3 +83,27 @@ def flight_list():
 
 def form_ticket():
     return render_template('formTicket.html')
+
+
+def pay():
+    return render_template('pay.html')
+
+
+def create_flight_schedule():
+    data = request.get_json()
+    try:
+        f = dao.create_flight_sche(airport_from=data['airport_from'], airport_to=data['airport_to'],
+                                   time_start=data['time_start'],
+                                   time_end=data['time_end'], quantity_ticket_1st=data['quantity_1st'],
+                                   quantity_ticket_2nd=data['quantity_2nd'])
+        for ab in data['ab_list']:
+            bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=f.id, time_stay=ab['ap_stay'], note=ab['ap_note'])
+    except Exception as err:
+        return {
+            'status': 500,
+            'data': err
+        }
+    return {
+        'status': 200,
+        'data': 'success'
+    }

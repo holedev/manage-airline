@@ -1,5 +1,5 @@
 from flask import request
-from manage_airline.models import User
+from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport
 from manage_airline import db
 import hashlib
 import google.auth.transport.requests
@@ -43,3 +43,27 @@ def get_user_oauth():
         audience=os.getenv("OAUTH_CLIENT_ID")
     )
     return user_oauth
+
+
+def get_airport_list():
+    return Airport.query.filter().all()
+
+
+def get_flight_sche_list():
+    return FlightSchedule.query.filter().all()
+
+
+def create_flight_sche(airport_from, airport_to, time_start, time_end, quantity_ticket_1st, quantity_ticket_2nd):
+    f = FlightSchedule(airport_from=airport_from, airport_to=airport_to, time_start=time_start,
+                       time_end=time_end, quantity_ticket_1st=quantity_ticket_1st,
+                       quantity_ticket_2nd=quantity_ticket_2nd)
+    db.session.add(f)
+    db.session.commit()
+    return f
+
+
+def create_bwa(airport_id, flight_sche_id, time_stay, note):
+    bwa = BetweenAirport(airport_id=airport_id, flight_sche_id=flight_sche_id, time_stay=time_stay, note=note)
+    db.session.add(bwa)
+    db.session.commit()
+    return bwa
