@@ -57,13 +57,14 @@ const submitBtn = document.querySelector('.submit-btn')
         }
 
         const ab_list = []
+        let error = false
         abws.forEach((ab, index) => {
             const ap_id = ab.querySelector("div:first-child > input").value
             const ap_stay = ab.querySelector("div:nth-child(2) > input").value
             const ap_note = ab.querySelector("div:nth-child(3) > input").value
 
-            if (ap_id == af.value || ap_id == at.value) {
-                return Swal.fire("Lỗi", "Sân bay trung gian không được trùng nơi đến hoặc nơi đi!", "error");
+            if (ap_id && (ap_id == af.value || ap_id == at.value)) {
+                error = true
             }
 
             if (ap_id && ap_stay) {
@@ -77,6 +78,10 @@ const submitBtn = document.querySelector('.submit-btn')
                 ab_list.push(obj)
             }
         })
+
+        if (error) {
+            return Swal.fire("Lỗi", "Sân bay trung gian không được trùng nơi đến hoặc nơi đi!", "error");
+        }
 
         const data = {
             "airport_from": af.value.split(" - ")[0],

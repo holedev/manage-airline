@@ -1,60 +1,55 @@
 {% extends 'layout/base.html' %}
 
 {% block content %}
-<div class="h-100 d-flex align-item-center justify-content-center">
-    <form method="post" action="" style="height: fit-content;" class="my-auto p-4 bg-white shadow-lg rounded-1">
-        <div class="d-flex gap-3">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="ticketType" id="ticketType-1" checked>
-                <label class="form-check-label" for="ticketType-1">
-                    Vé một chiều
-                </label>
+<datalist id="airports">
+    {% for a in airport_list %}
+    <option value="{{ a.id }} - {{ a }}">
+    </option>
+    {% endfor %}
+</datalist>
+<div class="">
+    <h2 class="text-center fw-bold my-5">Tìm chuyến bay</h2>
+    <div class="justify-content-center row">
+        <form method="post" action="" class="w-50 my-auto p-4 bg-white shadow-lg rounded-1">
+            <div class="d-flex gap-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="ticketType" id="ticketType-1" checked>
+                    <label class="form-check-label" for="ticketType-1">
+                        Vé một chiều
+                    </label>
+                </div>
             </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="ticketType" id="ticketType-2">
-                <label class="form-check-label" for="ticketType-2">
-                    Vé khứ hồi
-                </label>
-            </div>
-        </div>
-        <div class="mt-2">
-            <datalist id="cities">
-                <option value="TPHCM">
-                <option value="Hà Nội">
-                <option value="Đà Nẵng">
-                <option value="Long An">
-                <option value="Tiền Giang">
-            </datalist>
+            <div class="mt-2">
 
-            <div>
-                <label for="from" class="form-label">Từ:</label>
-                <input class="form-control" list="cities" name="from" id="from">
-            </div>
+                <div>
+                    <label for="ap_from" class="form-label">Từ:</label>
+                    <input class="form-control" list="airports" name="from" id="ap_from">
+                </div>
 
-            <div>
-                <label for="to" class="form-label">Đến:</label>
-                <input class="form-control" list="cities" name="to" id="to">
-            </div>
+                <div>
+                    <label for="ap_to" class="form-label">Đến:</label>
+                    <input class="form-control" list="airports" name="to" id="ap_to">
+                </div>
 
-        </div>
-        <div class="mt-2 d-flex gap-3">
-            <div class="flex-grow-1">
-                <label for="dayStart" class="form-label">Ngày đi:</label>
-                <input class="form-control" name="dayStart" id="dayStart" type="date">
             </div>
-            <div class="flex-grow-1">
-                <label for="dayEnd" class="form-label">Ngày về:</label>
-                <input class="form-control" name="dayEnd" id="dayEnd" type="date">
+            <div class="mt-2 d-flex gap-3">
+                <div class="flex-grow-1">
+                    <label for="time_start" class="form-label">Ngày đi:</label>
+                    <input class="form-control" name="dayStart" id="time_start" type="date">
+                </div>
+                <div class="align-self-end">
+                    <label for="ticket_type" class="form-label">Ghế:</label>
+                    <select id="ticket_type" name="rankChair" class="form-select">
+                        <option selected value="1">Hạng 1</option>
+                        <option value="2">Hạng 2</option>
+                    </select>
+                </div>
             </div>
-            <div class="align-self-end">
-                <label for="chair" class="form-label">Ghế:</label>
-                <select id="chair" name="rankChair" class="form-select">
-                    <option selected value="1">Hạng 1</option>
-                    <option value="2">Hạng 2</option>
-                </select>
-            </div>
-        </div>
-        <button type="submit" class="mt-4 w-100 btn btn-primary">Tìm chuyến bay</button>
-    </form>
+            <button id="submit-btn" type="submit" class="mt-4 w-100 btn btn-primary">Tìm chuyến bay</button>
+        </form>
+    </div>
 </div>
+{% block js %}
+<script defer src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}
 {% endblock %}

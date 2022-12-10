@@ -1,14 +1,14 @@
-from flask import render_template, redirect, session, request, url_for
+from flask import render_template, redirect, request, session
 from manage_airline import dao, db, flow
-from manage_airline.models import UserRole, User, FlightSchedule, BetweenAirport
+from manage_airline.models import UserRole, User
 from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
+import json
 
 
 def index():
-    if request.method.__eq__('POST'):
-        return redirect("/flight_list")
-    return render_template('index.html')
+    airport_list = dao.get_airport_list()
+    return render_template('index.html', airport_list=airport_list)
 
 
 @anonymous_user
@@ -78,7 +78,9 @@ def logout():
 
 
 def flight_list():
-    return render_template('flightList.html')
+    inp_search = session.get('inp_search')
+    data_search = session.get('data_search')
+    return render_template('flightList.html', data_search=data_search, inp_search=inp_search)
 
 
 def form_ticket():
@@ -97,7 +99,8 @@ def create_flight_schedule():
                                    time_end=data['time_end'], quantity_ticket_1st=data['quantity_1st'],
                                    quantity_ticket_2nd=data['quantity_2nd'])
         for ab in data['ab_list']:
-            bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=f.id, time_stay=ab['ap_stay'], note=ab['ap_note'])
+            bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=f.id, time_stay=ab['ap_stay'],
+                                 note=ab['ap_note'])
     except Exception as err:
         return {
             'status': 500,
@@ -106,4 +109,16 @@ def create_flight_schedule():
     return {
         'status': 200,
         'data': 'success'
+    }
+
+
+def search_flight_schedule():
+    data = request.get_json()
+    data_search = dao.search_flight_schedule(ap_from=data['airport_from'], ap_to=data['airport_to'],
+                                             time_start=data['time_start'], ticket_type=data['ticket_type'])
+    session['data_search'] = data_search
+    session['inp_search'] = data
+    return {
+        'status': 200,
+        'data': data_search
     }

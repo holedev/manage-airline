@@ -45,4 +45,3 @@ admin = Admin(app=app, name='Quản lý', template_mode='bootstrap4', index_view
 admin.add_view(UserView(User, db.session, name="Người dùng"))
 admin.add_view(AirportView(Airport, db.session, name='Sân bay'))
 admin.add_view(FlightScheView(FlightSchedule, db.session, name='Lịch chuyến bay'))
-admin.add_view(AuthenticatedModelView(BetweenAirport, db.session, name='Trung gian'))

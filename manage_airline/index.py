@@ -1,6 +1,4 @@
-from manage_airline import app, login, controllers, dao
-from manage_airline.models import UserRole
-
+from manage_airline import app, login, controllers
 
 app.add_url_rule('/', 'index', controllers.index, methods=['get', 'post'])
 
@@ -15,6 +13,8 @@ app.add_url_rule('/form_ticket', 'form_ticket', controllers.form_ticket, methods
 app.add_url_rule('/pay', 'pay', controllers.pay, methods=['get'])
 
 app.add_url_rule('/api/flight_schedule', 'create_flight_schedule', controllers.create_flight_schedule, methods=['post'])
+app.add_url_rule('/api/flight_schedule/search', 'search_flight_schedule', controllers.search_flight_schedule,
+                 methods=['post'])
 
 
 @login.user_loader
@@ -31,4 +31,5 @@ def common_attributes():
 
 if __name__ == '__main__':
     from manage_airline.admin import *
+
     app.run(host='localhost', port=5001, debug=True)

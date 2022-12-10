@@ -42,11 +42,14 @@ class FlightSchedule(BaseModel):
 
     airport_from = Column(Integer, ForeignKey(Airport.id))
     airport_to = Column(Integer, ForeignKey(Airport.id))
-
+    is_active = Column(Boolean, default=False)
     time_start = Column(DateTime, nullable=False)
     time_end = Column(DateTime, nullable=False)
     quantity_ticket_1st = Column(Integer, nullable=False)
+    quantity_ticket_1st_booked = Column(Integer, default=0)
     quantity_ticket_2nd = Column(Integer, nullable=False)
+    quantity_ticket_2nd_booked = Column(Integer, default=0)
+    price = Column(Integer, default=0)
 
     bw_airports = relationship('BetweenAirport', backref='flight_sche', lazy=False)
 

@@ -31,7 +31,7 @@
                 phép
                 lái xe do chính
                 phủ cấp.
-                Bạn nên tránh sai sót vì một số hãng hàng không cho phép sửa tên sau khi đặt vé.</p>
+                Bạn nên tránh sai sót vì một số hãng hàng không không cho phép sửa tên sau khi đặt vé.</p>
             <div class="d-flex gap-4 bg-white p-2 rounded-2">
                 <div class="flex-grow-1 mb-3">
                     <label for="fullname-1" class="fw-bold form-label">Họ và tên: </label>
@@ -54,10 +54,14 @@
             <p class="text-warning ms-2">
                 Sao bạn phải cố nhồi nhét? Thêm hành lý để chuyến đi thêm nhẹ nhàng.
             </p>
+            <datalist id="packages">
+                <option value="8"></option>
+                <option value="12"></option>
+            </datalist>
             <div class="d-flex gap-4 bg-white p-2 rounded-2">
                 <div class="flex-grow-1 mb-3">
                     <label for="package" class="fw-bold form-label">Tổng số kg hành lý: </label>
-                    <input required type="text" name="package" class="form-control" id="package">
+                    <input required type="text" name="package" class="form-control" list="packages" id="package">
                 </div>
             </div>
         </div>

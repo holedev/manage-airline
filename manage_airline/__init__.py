@@ -8,12 +8,15 @@ from flask_sqlalchemy import SQLAlchemy
 import pathlib
 from google_auth_oauthlib.flow import Flow
 from dotenv import load_dotenv
+from flask_moment import Moment
 
 load_dotenv()
 
 app = Flask(__name__)
 
 app.secret_key = os.getenv('SECRET_KEY')
+
+moment = Moment(app)
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 

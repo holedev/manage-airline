@@ -57,6 +57,7 @@
         <button class="btn btn-success submit-btn">Tạo lịch chuyến bay</button>
     </div>
 </form>
+<h5 class="my-3">LỊCH CHUYẾN BAY ĐÃ TẠO (Chờ xét duyệt)</h5>
 <table class="mt-4 table">
     <thead>
     <tr>
@@ -67,18 +68,20 @@
         <th scope="col">Thời gian đến</th>
         <th scope="col">Vé hạng 1</th>
         <th scope="col">Vé hạng 2</th>
+        <th scope="col">Sân trung gian</th>
     </tr>
     </thead>
     <tbody>
     {% for f in flight_sche_list %}
     <tr>
         <th scope="col">{{f.id}}</th>
-        <th scope="col">{{f.airport_from}}</th>
-        <th scope="col">{{f.airport_to}}</th>
+        <th scope="col">{{f['airport_from'].name}}</th>
+        <th scope="col">{{f.airport_to.name}}</th>
         <th scope="col">{{f.time_start}}</th>
         <th scope="col">{{f.time_end}}</th>
         <th scope="col">{{f.quantity_ticket_1st}}</th>
         <th scope="col">{{f.quantity_ticket_2nd}}</th>
+        <th scope="col">{{f.airport_between_list.quantity}}</th>
     </tr>
     {% endfor %}
     </tbody>
@@ -87,29 +90,6 @@
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 <script src="{{ url_for('static', filename='js/flightSche.js') }}"></script>
-<script>
-
-        const rows = document.querySelectorAll('table.table > tbody > tr')
-        const airports = document.querySelectorAll('#airports option')
-
-        const airport_list = []
-        airports.forEach(a => {
-            const obj = {
-                id: a.value.split(" - ")[0],
-                value: a.value.split(" - ")[1],
-            }
-            airport_list.push(obj)
-        })
-
-        rows.forEach(r => {
-            const af = r.querySelector('th:nth-child(2)')
-            const at = r.querySelector('th:nth-child(3)')
-
-            af.innerHTML = airport_list.find(a => a.id == af.innerHTML).value
-            at.innerHTML = airport_list.find(a => a.id == at.innerHTML).value
-        })
-
-</script>
 {% endblock %}
 
 
