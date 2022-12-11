@@ -4,29 +4,34 @@
 <div class="bg-light d-flex w-100 justify-content-between p-2 rounded-3 shadow-sm mt-4 align-items-center">
     <div>
         <div>
-            {{ data_search[0].airport_from.name }} → {{ data_search[0].airport_to.name }}
+            {{ session['inp_search'].airport_from.name }} → {{ session['inp_search'].airport_to.name }}
         </div>
         <div>
-            {{inp_search.time_start}} | 1 hành khách | Vé hạng {{ inp_search.ticket_type }}
+            {{ session['inp_search'].time_start}} | 1 hành khách | Vé hạng {{ session['inp_search'].ticket_type }}
         </div>
     </div>
-    <button class="btn btn-primary">
+    <a href="/" class="btn btn-primary">
         Đổi tìm kiếm
-    </button>
+    </a>
 </div>
+
+{% if not session['data_search'] %}
+<h3 class="text-danger text-center mt-4">Không có chuyến bay nào phù hợp!</h3>
+{% else %}
 <h3 class="text-center text-uppercase my-4">Danh sách chuyến bay phù hợp</h3>
-{% for d in data_search %}
-<div class="bg-light p-2 shadow-sm rounded-3">
+{% for d in session['data_search'] %}
+<div class="bg-light p-2 shadow-sm rounded-3 mt-3">
     <div class="px-3 d-flex justify-content-between align-items-center">
         <div>
             <div class="d-flex gap-5 justify-content-between align-items-center">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="text-center">
-                        {{ d.time_start.day }}/{{ d.time_start.month }} {{ d.time_start.hour }}:{{ d.time_start.minute }}
+                        {{ d.time_start.day }}/{{ d.time_start.month }} {{ d.time_start.hour }}:{{ d.time_start.minute
+                        }}
                         <br>
                         {{ d.airport_from.name }}
                     </div>
-                    <div class="mx-3" > →</div>
+                    <div class="mx-3"> →</div>
                     <div class="text-center">
                         {{ d.time_end.day }}/{{ d.time_end.month }} {{ d.time_end.hour }}:{{ d.time_end.minute }}
                         <br>
@@ -43,17 +48,17 @@
         </div>
         <div>
             <div>
-                {{ d.price }} VND / khách
+                {{ "{:,.0f}".format(d.price) }} VND / khách
             </div>
-            <a href="/form_ticket" class="btn w-100 btn-success">Chọn</a>
+            <a href="/form_ticket/{{ d.id }}" class="btn w-100 btn-success">Chọn</a>
         </div>
     </div>
     <div class="">
-        <span role="button" class="ps-3 fst-italic" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+        <span role="button" class="ps-3 fst-italic" data-bs-toggle="collapse" data-bs-target="#collapseExample-{{d.id}}"
               aria-expanded="false" aria-controls="collapseExample">
             Chi tiết chuyến bay
         </span>
-        <div class="collapse" id="collapseExample">
+        <div class="collapse" id="collapseExample-{{d.id}}">
             <div class="card card-body">
                 {% for abw in d.airport_between_list.data %}
                 <div> - Sân bay trung gian {{ abw.airport.name }} (dừng {{ abw.time_stay }} giờ)</div>
@@ -65,5 +70,7 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+
 
 {% endblock %}

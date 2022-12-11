@@ -1,10 +1,10 @@
 const submitBtn = document.querySelector('.submit-btn')
-    const start = document.querySelector('#time-start')
-    const end = document.querySelector('#time-end')
-    const af = document.querySelector('#airport-from')
-    const at = document.querySelector('#airport-to')
-    const quantity1st = document.querySelector('#quantity-1st')
-    const quantity2nd = document.querySelector('#quantity-2nd')
+const start = document.querySelector('#time-start')
+const end = document.querySelector('#time-end')
+const af = document.querySelector('#airport-from')
+const at = document.querySelector('#airport-to')
+const quantity1st = document.querySelector('#quantity-1st')
+const quantity2nd = document.querySelector('#quantity-2nd')
 
     const addAirportBw = (max) => {
         const abws = document.querySelectorAll(".airport-between")

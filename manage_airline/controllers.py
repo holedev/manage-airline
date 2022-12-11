@@ -74,20 +74,20 @@ def oauth_callback():
 
 def logout():
     logout_user()
+    session.clear()
     return redirect('/login')
 
 
 def flight_list():
-    inp_search = session.get('inp_search')
-    data_search = session.get('data_search')
-    return render_template('flightList.html', data_search=data_search, inp_search=inp_search)
+    return render_template('flightList.html')
 
 
-def form_ticket():
-    return render_template('formTicket.html')
+def form_ticket(f_id):
+    f = dao.get_flight_sche_json(f_id)
+    return render_template('formTicket.html', f=f, user_role=UserRole)
 
 
-def pay():
+def pay(f_id):
     return render_template('pay.html')
 
 
@@ -114,11 +114,77 @@ def create_flight_schedule():
 
 def search_flight_schedule():
     data = request.get_json()
+    inp_search = dao.get_inp_search_json(af_id=data['airport_from'], at_id=data['airport_to'],
+                                         time_start=data['time_start'], ticket_type=data['ticket_type'])
+
     data_search = dao.search_flight_schedule(ap_from=data['airport_from'], ap_to=data['airport_to'],
                                              time_start=data['time_start'], ticket_type=data['ticket_type'])
     session['data_search'] = data_search
-    session['inp_search'] = data
+    session['inp_search'] = inp_search
     return {
         'status': 200,
         'data': data_search
     }
+
+
+def create_form_ticket(f_id):
+    data = request.get_json()
+    session['form_ticket'] = data
+    remain_ticket = dao.get_ticket_remain(data['f_id'], int(data['ticket_type']))
+    if remain_ticket < data['customers_info'][0]['quantity']:
+        return {
+            'status': 500,
+            'data': "Chỉ có thể đặt tối đa %s vé!" % remain_ticket
+        }
+
+    if data['user_role'] == 'UserRole.USER':
+        check_time = dao.check_time_customer(data['f_id'])
+        if not check_time:
+            return {
+                'status': 500,
+                'data': "Không thể đặt vé cách giờ bay trước 12 tiếng!"
+            }
+    else:
+        check_time = dao.check_time_staff(data['f_id'])
+        if not check_time:
+            return {
+                'status': 500,
+                'data': "Không thể đặt vé cách giờ bay trước 4 tiếng!"
+            }
+        pay_ticket(data['f_id'], is_staff=True)
+    return {
+        'status': 200,
+        'data': data['f_id']
+    }
+
+
+def pay_ticket(f_id, is_staff):
+    data = request.get_json()
+    if is_staff is None:
+        check_paypal = dao.check_paypal(number_card=data['number_card'], mm_yy=data['mmYY'], cvc_code=data['cvcCode'],
+                                        name=data['name'])
+    else:
+        check_paypal = True
+    if check_paypal:
+        data_ticket = session.get('form_ticket')
+        print(data_ticket)
+        data_customer = data_ticket['customers_info'][0]['data']
+        for c in data_customer:
+            package_price = 0
+            if c['id'] == 2:
+                package_price = data_ticket['package_price']
+            c = dao.create_ticket(u_id=current_user.get_id(), f_id=data_ticket['f_id'],
+                                  t_type=data_ticket['ticket_type'], t_package_price=package_price, c_name=c['name'],
+                                  c_phone=c['phone'], c_id=c['id_customer'])
+    return {
+        'status': 200,
+        'data': 'success'
+    }
+
+
+def preview_ticket(u_id):
+    t_list_json = dao.get_ticket_list_json(u_id)
+    return render_template("previewTicket.html", t_list_json=t_list_json)
+
+
+

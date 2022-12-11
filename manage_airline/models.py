@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime, Time
 from enum import Enum as UserEnum
 from sqlalchemy.orm import relationship, backref
@@ -43,6 +45,7 @@ class FlightSchedule(BaseModel):
     airport_from = Column(Integer, ForeignKey(Airport.id))
     airport_to = Column(Integer, ForeignKey(Airport.id))
     is_active = Column(Boolean, default=False)
+
     time_start = Column(DateTime, nullable=False)
     time_end = Column(DateTime, nullable=False)
     quantity_ticket_1st = Column(Integer, nullable=False)
@@ -64,6 +67,20 @@ class BetweenAirport(BaseModel):
     flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
     time_stay = Column(Integer, nullable=False)
     note = Column(String(100))
+
+
+class Ticket(BaseModel):
+    author_id = Column(Integer, ForeignKey(User.id))
+    flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
+    ticket_price = Column(Integer, nullable=False)
+    ticket_type = Column(Integer, nullable=False)
+    ticket_package_price = Column(Integer, default=0)
+
+    customer_name = Column(String(100), nullable=False)
+    customer_phone = Column(String(10), nullable=False)
+    customer_id = Column(String(10), nullable=False)
+
+    created_at = Column(DateTime, default=datetime.datetime.now())
 
 
 if __name__ == '__main__':

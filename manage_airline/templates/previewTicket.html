@@ -1,0 +1,35 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+{% for t in t_list_json %}
+<div class="row">
+
+</div>
+<table class="table mt-4" style="border: 1px solid #ccc;">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center" colspan="2">VÉ CHUYẾN BAY</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>CHUYẾN BAY: <span class="fw-bold">{{ t['flight_sche_id']['airport_from']['name'] }}  →  {{ t['flight_sche_id']['airport_to']['name'] }}</span>
+        </td>
+        <td>HÀNH KHÁCH: <span class="fw-bold">{{ t['customer_name'] }}</span></td>
+    </tr>
+    <tr>
+        <td>CMND/CCCD: <span class="fw-bold">{{ t['customer_id'] }}</span></td>
+        <td>ĐIỆN THOẠI: <span class="fw-bold">{{ t['customer_phone'] }}</span></td>
+    </tr>
+    <tr>
+        <td>HẠNG VÉ: <span class="fw-bold">Vé hạng {{ t['ticket_type'] }}</span></td>
+        <td>GIÁ TIỀN: <span class="fw-bold">{{ "{:,.0f}".format(t['ticket_price']) }} VND</span></td>
+    </tr>
+    <tr>
+        <td colspan="2">THỜI GIAN ĐẶT VÉ: <span class="fw-bold">{{ moment(t['created_at']).format('LLLL') }}</span></td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+
+{% endblock %}

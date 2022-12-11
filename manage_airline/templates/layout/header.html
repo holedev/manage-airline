@@ -5,21 +5,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <a class="navbar-brand fs-3 fw-bold" href="#">CNPM</a>
+            <a class="navbar-brand fs-3 fw-bold" href="/">CNPM</a>
             <div class="d-flex gap-1 ms-auto">
                 {% if current_user.is_authenticated %}
-                <!--                <div class="dropdown">-->
-                <!--                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"-->
-                <!--                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                <!--                        {{ current_user.fullname }}-->
-                <!--                    </button>-->
-                <!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
-                <!--                        {% if current_user.user_role == user_role.ADMIN %}-->
-                <!--                        <a href="/admin" class="dropdown-item">Quản lý</a>-->
-                <!--                        {% endif %}-->
-                <!--                        <a href="/logout" class="dropdown-item">Đăng xuất</a>-->
-                <!--                    </div>-->
-                <!--                </div>-->
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                             data-bs-toggle="dropdown" aria-expanded="false">

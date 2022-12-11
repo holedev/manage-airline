@@ -2,7 +2,10 @@
 
 {% block content %}
 <div class="d-flex flex-column align-items-center p-5">
-    <h4 class="mb-3">Thanh toán qua Paypal</h4>
+    <div class="d-flex align-items-center gap-5 mb-3">
+        <div class="fs-3 fw-bold">Thanh toán qua Paypal</div>
+        <div style="color: rgb(255, 94, 31);" class="fw-bold fs-4"><span id="price" class="price">{{ session['form_ticket'].total }}</span> VNĐ</div>
+    </div>
     <div class="card-body border col-lg-7 p-0">
         <p>
             <a class="btn btn-primary p-2 h-100 d-flex align-items-center justify-content-between"
@@ -19,31 +22,31 @@
                             <div class="col-12">
                                 <div class="form__div">
                                     <label for="card-number" class="form__label">CARD NUMBER</label>
-                                    <input type="text" id="card-number" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
+                                    <input value="1234 1234 1234 1234" type="text" id="card-number" class="form-control" placeholder="XXXX XXXX XXXX XXXX">
                                 </div>
                             </div>
 
                             <div class="col-6 mt-3">
                                 <div class="form__div">
                                     <label for="mm-yy" class="form__label">MM / YY</label>
-                                    <input type="text" id="mm-yy" class="form-control" placeholder="XX / XX">
+                                    <input value="12 / 34" type="text" id="mm-yy" class="form-control" placeholder="XX / XX">
                                 </div>
                             </div>
 
                             <div class="col-6 mt-3">
                                 <div class="form__div">
                                     <label for="cvc-code" class="form__label">CVC CODE</label>
-                                    <input type="password" id="cvc-code" class="form-control" placeholder="XXX">
+                                    <input value="123" type="password" id="cvc-code" class="form-control" placeholder="XXX">
                                 </div>
                             </div>
                             <div class="col-12 mt-3">
                                 <div class="form__div">
                                     <label for="name-card" class="form__label">NAME ON THE CARD</label>
-                                    <input type="text" id="name-card" class="form-control" placeholder=" ">
+                                    <input value="CNPM" type="text" id="name-card" class="form-control" placeholder=" ">
                                 </div>
                             </div>
                             <div class="col-12">
-                                <button type="submit" class="mt-4 btn btn-primary w-100">Thanh toán ngay</button>
+                                <button id="submit-btn" class="mt-4 btn btn-primary w-100">Thanh toán ngay</button>
                             </div>
                         </div>
                     </form>
@@ -52,5 +55,7 @@
         </div>
     </div>
 </div>
-
+{% block js %}
+<script defer src="{{ url_for('static', filename='js/pay.js') }}"></script>
+{% endblock %}
 {% endblock %}
