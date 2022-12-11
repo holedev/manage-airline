@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime, Time
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime, Time, Float
 from enum import Enum as UserEnum
 from sqlalchemy.orm import relationship, backref
 from manage_airline import db, app
@@ -44,7 +44,9 @@ class FlightSchedule(BaseModel):
 
     airport_from = Column(Integer, ForeignKey(Airport.id))
     airport_to = Column(Integer, ForeignKey(Airport.id))
+
     is_active = Column(Boolean, default=False)
+    is_deleted = Column(Boolean, default=False)
 
     time_start = Column(DateTime, nullable=False)
     time_end = Column(DateTime, nullable=False)
@@ -65,7 +67,7 @@ class BetweenAirport(BaseModel):
 
     airport_id = Column(Integer, ForeignKey(Airport.id))
     flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
-    time_stay = Column(Integer, nullable=False)
+    time_stay = Column(Float, nullable=False)
     note = Column(String(100))
 
 
@@ -83,11 +85,24 @@ class Ticket(BaseModel):
     created_at = Column(DateTime, default=datetime.datetime.now())
 
 
+class ADMINRules(BaseModel):
+    min_time_flight_sche = Column(Float, default=0.5)
+    max_between_airport = Column(Float, default=2)
+    min_time_stay_airport = Column(Float, default=0.33)
+    max_time_stay_airport = Column(Float, default=0.5)
+    customer_time_ticket = Column(Float, default=12)
+    staff_time_ticket = Column(Float, default=4)
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         # u = User(fullname='ADMIN', username='admin', password=password, user_role=UserRole.ADMIN)
         # db.session.add(u)
+        # db.session.commit()
+
+        # a = ADMINRules()
+        # db.session.add(a)
         # db.session.commit()
 
         pass

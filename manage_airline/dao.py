@@ -86,7 +86,8 @@ def get_airport_bw_list_json(f_id):
 
 
 def get_flight_sche_list(active=False):
-    f_list = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(active))
+    f_list = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(active),
+                                         FlightSchedule.is_deleted.__eq__(False))
     flight_sche_list = []
     for f in f_list:
         flight_sche = get_flight_sche_json(f.id)
@@ -95,7 +96,7 @@ def get_flight_sche_list(active=False):
 
 
 def get_flight_sche_json(f_id):
-    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id)).all()[0]
+    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_deleted.__eq__(False)).all()[0]
     bwa_list = get_airport_bw_list_json(f.id)
     af = get_airport_json(f.airport_from)
     at = get_airport_json(f.airport_to)
@@ -135,7 +136,8 @@ def create_bwa(airport_id, flight_sche_id, time_stay, note):
 
 
 def get_ticket_remain(f_id, ticket_type):
-    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.id.__eq__(f_id)).all()[0]
+    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False),
+                                    FlightSchedule.id.__eq__(f_id)).all()[0]
     remain = 0
     if ticket_type == 1:
         remain = f.quantity_ticket_1st - f.quantity_ticket_1st_booked
@@ -145,14 +147,16 @@ def get_ticket_remain(f_id, ticket_type):
 
 
 def check_time_customer(f_id):
-    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.id.__eq__(f_id)).first()
+    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False),
+                                    FlightSchedule.id.__eq__(f_id)).first()
     f_ts = f.time_start.timestamp()
     n_ts = datetime.datetime.now().timestamp()
     return (f_ts - n_ts) / 3600 > 12
 
 
 def check_time_staff(f_id):
-    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.id.__eq__(f_id)).first()
+    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False),
+                                    FlightSchedule.id.__eq__(f_id)).first()
     f_ts = f.time_start.timestamp()
     n_ts = datetime.datetime.now().timestamp()
     return (f_ts - n_ts) / 3600 > 4
@@ -162,7 +166,7 @@ def search_flight_schedule(ap_from, ap_to, time_start, ticket_type):
     time_arr = time_start.split('-')
     time = datetime.datetime(int(time_arr[0]), int(time_arr[1]), int(time_arr[2]))
 
-    f_list = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True))
+    f_list = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False))
     f_list = f_list.filter(FlightSchedule.airport_from.__eq__(ap_from),
                            FlightSchedule.airport_to.__eq__(ap_to),
                            FlightSchedule.time_start.__gt__(time))
@@ -197,7 +201,8 @@ def check_paypal(number_card, mm_yy, cvc_code, name):
 
 
 def create_ticket(u_id, f_id, t_type, t_package_price, c_name, c_phone, c_id):
-    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_active.__eq__(True)).first()
+    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_active.__eq__(True),
+                                    FlightSchedule.is_deleted.__eq__(False)).first()
     if int(t_type) == 1:
         f.quantity_ticket_1st_booked = f.quantity_ticket_1st_booked + 1
     if int(t_type) == 2:
@@ -240,7 +245,23 @@ def get_ticket_list_json(u_id):
     return t_list_json
 
 
+def add_flight_schedule(f_id, price):
+    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(False), FlightSchedule.id.__eq__(f_id)).first()
+    f.is_active = True
+    f.price = int(price)
+    db.session.commit()
+    return f
+
+
+def delete_flight_schedule(f_id):
+    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_deleted.__eq__(False)).first()
+    f.is_deleted = True
+    db.session.commit()
+    return f
+
+
 if __name__ == '__main__':
     from manage_airline import app
+
     with app.app_context():
-        print(get_ticket_list_json(1))
+        print(add_flight_schedule(1, 500000))

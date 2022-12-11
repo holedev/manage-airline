@@ -3,7 +3,6 @@ from manage_airline import dao, db, flow
 from manage_airline.models import UserRole, User
 from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
-import json
 
 
 def index():
@@ -23,8 +22,7 @@ def login():
             login_user(user=user)
             if user.user_role == UserRole.ADMIN:
                 return redirect('/admin')
-            n = request.args.get('next')
-            return redirect(n if n else '/')
+            return redirect('/')
         else:
             return render_template('login.html', error="Sai tên tài khoản hoặc mật khẩu!")
     return render_template('login.html')
@@ -69,6 +67,9 @@ def oauth_callback():
         db.session.add(user)
         db.session.commit()
     login_user(user)
+    if user.user_role == UserRole.ADMIN:
+        print("OK")
+        return redirect('/admin')
     return redirect("/")
 
 
@@ -187,4 +188,19 @@ def preview_ticket(u_id):
     return render_template("previewTicket.html", t_list_json=t_list_json)
 
 
+def add_flight_schedule(f_id):
+    data = request.get_json()
+    f = dao.add_flight_schedule(f_id, data['price'])
+    return {
+        'status': 200,
+        'data': f.id
+    }
+
+
+def delete_flight_schedule(f_id):
+    f = dao.delete_flight_schedule(f_id)
+    return {
+        'status': 200,
+        'data': f.id
+    }
 

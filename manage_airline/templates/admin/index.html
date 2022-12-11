@@ -3,8 +3,134 @@
 {% block body %}
 
 {% if current_user.is_authenticated %}
-<h1 class="text-center text-success">QUẢN LÝ CHUYẾN BAY</h1>
-<h3 class="text-center">Chào <span class="text-danger">{{ current_user.fullname }}</span>!</h3>
+<h1 class="text-center text-success">
+    <span class="badge bg-primary text-white">
+        {% if current_user.user_role==user_role.ADMIN %}
+        QUẢN TRỊ VIÊN
+        {% else %}
+        NHÂN VIÊN
+        {% endif %}
+    </span>
+</h1>
+<h3 class="text-center mb-4">
+    Chào <span class="text-danger">{{ current_user.fullname }}</span>
+</h3>
+{% if current_user.user_role==user_role.ADMIN %}
+<h2 class="text-center">Danh sách lịch chuyến bay chờ duyệt</h2>
+<div style="padding: 0 !important;" class="modal modal-fullscreen-xl" id="modal-fullscreen-xl" tabindex="-1"
+     role="dialog" aria-hidden="true">
+    <div style="max-width: none; height: 100%; display: flex; align-items: center; margin: 0;" class="w-100 modal-dialog" role="document">
+        <div style="height: fit-content; border: 0; border-radius:0;" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi tiết chuyến bay</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <datalist id="airports">
+                    {% for a in airport_list %}
+                    <option value="{{ a.id }} - {{ a }}">
+                    </option>
+                    {% endfor %}
+                </datalist>
+                <div class="row my-4">
+                    <div class="col-lg-6">
+                        <label for="airport-from" class="form-label">Sân bay đi:</label>
+                        <input name="airport_from" required type="text" class="form-control" id="airport-from"
+                               list="airports">
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="airport-to" class="form-label">Sân bay đến:</label>
+                        <input required name="airport_to" type="text" class="form-control" id="airport-to"
+                               list="airports">
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-lg-3">
+                        <label for="time-start" class="form-label">Thời gian đi:</label>
+                        <input required name="time_start" type="datetime-local" class="form-control" id="time-start">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="time-end" class="form-label">Thời gian đến (dự kiến):</label>
+                        <input required name="time_end" type="datetime-local" class="form-control" id="time-end">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="quantity-1st" class="form-label">Số lượng vé loại 1:</label>
+                        <input required name="quantity_1st" value="50" type="number" class="form-control"
+                               id="quantity-1st" min="0"
+                               max="100">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="quantity-2nd" class="form-label">Số lượng vé loại 2:</label>
+                        <input required name="quantity_2nd" value="50" type="number" class="form-control"
+                               id="quantity-2nd" min="0"
+                               max="100">
+                    </div>
+                </div>
+                <div class="row airport-between">
+                    <div class="col-lg-3">
+                        <label for="airport-bw" class="form-label">Sân bay trung gian:</label>
+                        <input name="airport_bw" type="text" class="form-control" id="airport-bw" list="airports">
+                    </div>
+                    <div class="col-lg-3">
+                        <label for="airport-bw-stay" class="form-label">Thời gian dừng (giờ):</label>
+                        <input name="airport_bw_stay" min="0" type="number" class="form-control" id="airport-bw-stay">
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="airport-bw-note" class="form-label">Ghi chú:</label>
+                        <input name="airport_bw_note" type="text" class="form-control" id="airport-bw-note">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <div onClick="addAirportBw(2)" class="btn btn-primary mr-3 add-abw">Thêm sân bay trung gian (Còn lại
+                        1)
+                    </div>
+                    <button class="btn btn-success submit-btn">Tạo lịch chuyến bay</button>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<table class="mt-4 table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Sân đi</th>
+        <th scope="col">Sân đến</th>
+        <th scope="col">Thời gian đi</th>
+        <th scope="col">Thời gian đến</th>
+        <th scope="col">Vé hạng 1</th>
+        <th scope="col">Vé hạng 2</th>
+        <th scope="col" colspan="3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for f in f_list %}
+    <tr data-toggle="modal" data-target="#modal-fullscreen-xl" id="tr-{{ f.id }}">
+        <th scope="col">{{f.id}}</th>
+        <th scope="col">{{f['airport_from'].name}}</th>
+        <th scope="col">{{f.airport_to.name}}</th>
+        <th scope="col">{{f.time_start}}</th>
+        <th scope="col">{{f.time_end}}</th>
+        <th scope="col">{{f.quantity_ticket_1st}}</th>
+        <th scope="col">{{f.quantity_ticket_2nd}}</th>
+        <th scope="col">
+            <button data-id="{{ f.id }}" class="accept btn btn-sm btn-primary">Duyệt</button>
+            <button data-id="{{ f.id }}" class="delete btn btn-sm btn-danger">Xoá</button>
+        </th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endif %}
-
+{% endif %}
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<script defer src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

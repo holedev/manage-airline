@@ -20,6 +20,10 @@ app.add_url_rule('/api/form_ticket/<int:f_id>', 'create_form_ticket', controller
                  methods=['post'])
 app.add_url_rule('/api/pay/<int:f_id>', 'pay_ticket', controllers.pay_ticket,
                  methods=['post'])
+app.add_url_rule('/api/flight_schedule/add/<int:f_id>', 'add_flight_schedule', controllers.add_flight_schedule,
+                 methods=['post'])
+app.add_url_rule('/api/flight_schedule/delete/<int:f_id>', 'delete_flight_schedule', controllers.delete_flight_schedule,
+                 methods=['post'])
 
 
 @login.user_loader
