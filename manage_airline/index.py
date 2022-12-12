@@ -13,7 +13,8 @@ app.add_url_rule('/form_ticket/<int:f_id>', 'form_ticket', controllers.form_tick
 app.add_url_rule('/pay/<int:f_id>', 'pay', controllers.pay, methods=['get'])
 app.add_url_rule('/preview_ticket/<int:u_id>', 'preview_ticket', controllers.preview_ticket, methods=['get'])
 
-app.add_url_rule('/api/flight_schedule', 'create_flight_schedule', controllers.create_flight_schedule, methods=['post'])
+app.add_url_rule('/api/flight_schedule', 'create_flight_schedule', controllers.create_flight_schedule,
+                 methods=['post', 'patch'])
 app.add_url_rule('/api/flight_schedule/search', 'search_flight_schedule', controllers.search_flight_schedule,
                  methods=['post'])
 app.add_url_rule('/api/form_ticket/<int:f_id>', 'create_form_ticket', controllers.create_form_ticket,
@@ -23,6 +24,10 @@ app.add_url_rule('/api/pay/<int:f_id>', 'pay_ticket', controllers.pay_ticket,
 app.add_url_rule('/api/flight_schedule/add/<int:f_id>', 'add_flight_schedule', controllers.add_flight_schedule,
                  methods=['post'])
 app.add_url_rule('/api/flight_schedule/delete/<int:f_id>', 'delete_flight_schedule', controllers.delete_flight_schedule,
+                 methods=['post'])
+app.add_url_rule('/api/user/confirm', 'confirm_user', controllers.confirm_user,
+                 methods=['post'])
+app.add_url_rule('/api/admin_rules', 'create_admin_rules', controllers.create_admin_rules,
                  methods=['post'])
 
 
@@ -40,4 +45,5 @@ def common_attributes():
 
 if __name__ == '__main__':
     from manage_airline.admin import *
+
     app.run(host='localhost', port=5001, debug=True)

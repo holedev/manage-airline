@@ -1,5 +1,5 @@
 from flask import request, session
-from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport, Ticket
+from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport, Ticket, ADMINRules
 from manage_airline import db
 import hashlib
 import datetime
@@ -71,7 +71,8 @@ def get_airport_bw_list(f_id):
 
 
 def get_airport_bw_list_json(f_id):
-    bwa_list = BetweenAirport.query.filter(BetweenAirport.flight_sche_id.__eq__(f_id))
+    bwa_list = BetweenAirport.query.filter(BetweenAirport.flight_sche_id.__eq__(f_id),
+                                           BetweenAirport.is_deleted.__eq__(False))
     airport_between_list = []
     for bwa in bwa_list:
         obj = {
@@ -128,8 +129,36 @@ def create_flight_sche(airport_from, airport_to, time_start, time_end, quantity_
     return f
 
 
+def get_flight_sche(f_id):
+    f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_active.__eq__(False),
+                                    FlightSchedule.is_deleted.__eq__(False)).first()
+    return f
+
+
+def update_flight_sche(f_id, airport_from, airport_to, time_start, time_end, quantity_ticket_1st, quantity_ticket_2nd):
+    f = get_flight_sche(f_id)
+    f.airport_from = int(airport_from)
+    f.airport_to = int(airport_to)
+    f.time_start = time_start
+    f.time_end = time_end
+    f.quantity_ticket_1st = int(quantity_ticket_1st)
+    f.quantity_ticket_2nd = int(quantity_ticket_2nd)
+    db.session.commit()
+    return f
+
+
+def del_abw_list(f_id):
+    ab_list = BetweenAirport.query.filter(BetweenAirport.flight_sche_id.__eq__(f_id),
+                                          BetweenAirport.is_deleted.__eq__(False)).all()
+    for ab in ab_list:
+        ab.is_deleted = True
+    db.session.commit()
+    return f_id
+
+
 def create_bwa(airport_id, flight_sche_id, time_stay, note):
-    bwa = BetweenAirport(airport_id=airport_id, flight_sche_id=flight_sche_id, time_stay=time_stay, note=note)
+    bwa = BetweenAirport(airport_id=int(airport_id), flight_sche_id=int(flight_sche_id), time_stay=float(time_stay),
+                         note=note)
     db.session.add(bwa)
     db.session.commit()
     return bwa
@@ -146,20 +175,15 @@ def get_ticket_remain(f_id, ticket_type):
     return remain
 
 
-def check_time_customer(f_id):
+def check_time(f_id, is_user=True):
     f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False),
                                     FlightSchedule.id.__eq__(f_id)).first()
+    ar = get_admin_rules_latest()
     f_ts = f.time_start.timestamp()
     n_ts = datetime.datetime.now().timestamp()
-    return (f_ts - n_ts) / 3600 > 12
-
-
-def check_time_staff(f_id):
-    f = FlightSchedule.query.filter(FlightSchedule.is_active.__eq__(True), FlightSchedule.is_deleted.__eq__(False),
-                                    FlightSchedule.id.__eq__(f_id)).first()
-    f_ts = f.time_start.timestamp()
-    n_ts = datetime.datetime.now().timestamp()
-    return (f_ts - n_ts) / 3600 > 4
+    if is_user:
+        return (f_ts - n_ts) / 3600 > ar.customer_time_ticket
+    return (f_ts - n_ts) / 3600 > ar.staff_time_ticket
 
 
 def search_flight_schedule(ap_from, ap_to, time_start, ticket_type):
@@ -260,8 +284,37 @@ def delete_flight_schedule(f_id):
     return f
 
 
+def get_admin_rules_latest():
+    ar = ADMINRules.query.order_by(ADMINRules.created_at.desc()).first()
+    return ar
+
+
+def confirm_user(u_id, password):
+    u = get_user_by_id(u_id)
+    u = auth_user(username=u.username, password=password)
+    if u:
+        return True
+    return False
+
+
+def create_admin_rules(min_time_flight_sche, max_between_airport_quantity, min_time_stay_airport,
+                       max_time_stay_airport, customer_time_ticket, staff_time_ticket):
+    ar = ADMINRules(min_time_flight_sche=min_time_flight_sche,
+                    max_between_airport_quantity=max_between_airport_quantity,
+                    min_time_stay_airport=min_time_stay_airport, max_time_stay_airport=max_time_stay_airport,
+                    customer_time_ticket=customer_time_ticket, staff_time_ticket=staff_time_ticket,
+                    created_at=datetime.datetime.now())
+    db.session.add(ar)
+    db.session.commit()
+    return ar
+
+
+def get_admin_rules_list():
+    return ADMINRules.query.order_by(ADMINRules.created_at.desc()).all()
+
+
 if __name__ == '__main__':
     from manage_airline import app
 
     with app.app_context():
-        print(add_flight_schedule(1, 500000))
+        print(confirm_user(1, '123456'))

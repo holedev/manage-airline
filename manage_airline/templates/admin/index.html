@@ -17,10 +17,17 @@
 </h3>
 {% if current_user.user_role==user_role.ADMIN %}
 <h2 class="text-center">Danh sách lịch chuyến bay chờ duyệt</h2>
+<datalist id="airports">
+    {% for a in a_list %}
+    <option value="{{ a.id }} - {{ a }}">
+    </option>
+    {% endfor %}
+</datalist>
 <div style="padding: 0 !important;" class="modal modal-fullscreen-xl" id="modal-fullscreen-xl" tabindex="-1"
      role="dialog" aria-hidden="true">
-    <div style="max-width: none; height: 100%; display: flex; align-items: center; margin: 0;" class="w-100 modal-dialog" role="document">
-        <div style="height: fit-content; border: 0; border-radius:0;" class="modal-content">
+    <div style="max-width: none; height: 100%; display: flex; align-items: center; justify-content: center; margin: 0;"
+         class="w-100 modal-dialog" role="document">
+        <div style="height: fit-content; border: 0; border-radius:0;" class="w-75 modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Chi tiết chuyến bay</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -28,12 +35,6 @@
                 </button>
             </div>
             <div class="modal-body">
-                <datalist id="airports">
-                    {% for a in airport_list %}
-                    <option value="{{ a.id }} - {{ a }}">
-                    </option>
-                    {% endfor %}
-                </datalist>
                 <div class="row my-4">
                     <div class="col-lg-6">
                         <label for="airport-from" class="form-label">Sân bay đi:</label>
@@ -46,7 +47,7 @@
                                list="airports">
                     </div>
                 </div>
-                <div class="row mb-4">
+                <div class="row row2 mb-4">
                     <div class="col-lg-3">
                         <label for="time-start" class="form-label">Thời gian đi:</label>
                         <input required name="time_start" type="datetime-local" class="form-control" id="time-start">
@@ -68,31 +69,15 @@
                                max="100">
                     </div>
                 </div>
-                <div class="row airport-between">
-                    <div class="col-lg-3">
-                        <label for="airport-bw" class="form-label">Sân bay trung gian:</label>
-                        <input name="airport_bw" type="text" class="form-control" id="airport-bw" list="airports">
-                    </div>
-                    <div class="col-lg-3">
-                        <label for="airport-bw-stay" class="form-label">Thời gian dừng (giờ):</label>
-                        <input name="airport_bw_stay" min="0" type="number" class="form-control" id="airport-bw-stay">
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="airport-bw-note" class="form-label">Ghi chú:</label>
-                        <input name="airport_bw_note" type="text" class="form-control" id="airport-bw-note">
-                    </div>
-                </div>
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <div onClick="addAirportBw(2)" class="btn btn-primary mr-3 add-abw">Thêm sân bay trung gian (Còn lại
+                    <button onClick="delAirportBw(2)" class="btn btn-danger mr-3 del-abw">Xoá STG
+                    </button>
+                    <button data-max="2" onClick="addAirportBw(2)" class="btn btn-primary mr-3 add-abw">Thêm STG (Còn lại
                         1)
-                    </div>
-                    <button class="btn btn-success submit-btn">Tạo lịch chuyến bay</button>
+                    </button>
+                    <button class="btn btn-success submit-btn">Cập nhật lịch chuyến bay</button>
                 </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -112,7 +97,7 @@
     </thead>
     <tbody>
     {% for f in f_list %}
-    <tr data-toggle="modal" data-target="#modal-fullscreen-xl" id="tr-{{ f.id }}">
+    <tr id="tr-{{ f.id }}">
         <th scope="col">{{f.id}}</th>
         <th scope="col">{{f['airport_from'].name}}</th>
         <th scope="col">{{f.airport_to.name}}</th>
@@ -121,6 +106,10 @@
         <th scope="col">{{f.quantity_ticket_1st}}</th>
         <th scope="col">{{f.quantity_ticket_2nd}}</th>
         <th scope="col">
+            <button onclick="openModal({{ f.id }}, {{ f.airport_from }}, {{ f.airport_to }}, '{{ f.time_start }}', '{{ f.time_end }}' , {{ f.quantity_ticket_1st }}, {{ f.quantity_ticket_2nd }}, {{ f.airport_between_list }})"
+                    data-toggle="modal" data-target="#modal-fullscreen-xl" data-id="{{ f.id }}"
+                    class="detail btn btn-sm btn-info">Chi tiết
+            </button>
             <button data-id="{{ f.id }}" class="accept btn btn-sm btn-primary">Duyệt</button>
             <button data-id="{{ f.id }}" class="delete btn btn-sm btn-danger">Xoá</button>
         </th>
@@ -132,5 +121,6 @@
 {% endif %}
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
-<script defer src="{{ url_for('static', filename='js/admin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}

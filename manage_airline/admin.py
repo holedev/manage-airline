@@ -1,9 +1,10 @@
-from flask import redirect, url_for, session
+from flask import redirect, url_for, session, flash
 from manage_airline import app, db, dao
 from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user, logout_user
-from manage_airline.models import UserRole, User, FlightSchedule, Airport, BetweenAirport
+from manage_airline.models import UserRole, User, FlightSchedule, Airport, BetweenAirport, ADMINRules
+import json
 
 
 class AuthenticatedView(BaseView):
@@ -38,7 +39,17 @@ class FlightScheView(AuthenticatedStaff):
     def index(self):
         airport_list = dao.get_airport_list()
         flight_sche_list = dao.get_flight_sche_list()
-        return self.render('admin/flightSche.html', airport_list=airport_list, flight_sche_list=flight_sche_list)
+        rules = dao.get_admin_rules_latest()
+        return self.render('admin/flightSche.html', airport_list=airport_list, flight_sche_list=flight_sche_list,
+                           rules=rules)
+
+
+class RulesView(AuthenticatedAdmin):
+    @expose('/')
+    def index(self):
+        rules = dao.get_admin_rules_latest()
+        rules_list = dao.get_admin_rules_list()
+        return self.render('admin/rules.html', rules=rules, rules_list=rules_list)
 
 
 class MyAdminView(AdminIndexView):
@@ -69,6 +80,7 @@ class HomeView(AuthenticatedView):
 
 admin = Admin(app=app, name='Quản lý', template_mode='bootstrap4', index_view=MyAdminView())
 admin.add_view(UserView(User, db.session, name="Người dùng"))
+admin.add_view(RulesView(ADMINRules, db.session, name='Quy định'))
 admin.add_view(AirportView(Airport, db.session, name='Sân bay'))
 admin.add_view(FlightScheView(FlightSchedule, db.session, name='Lịch chuyến bay'))
 admin.add_view(HomeView(name='Trang chủ người dùng'))

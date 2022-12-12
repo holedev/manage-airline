@@ -124,7 +124,7 @@ submitBtn.onclick = (e) => {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status == 200 && submitBtn.dataset.user!='User.USER') {
+        if (data.status == 200 && submitBtn.dataset.user != 'UserRole.USER') {
             const inputList = document.querySelectorAll('form input')
             Array.from(inputList).forEach(inp => inp.value=null)
             select.value=0
@@ -139,6 +139,7 @@ submitBtn.onclick = (e) => {
                 window.location.href = "/preview_ticket/" + submitBtn.dataset.userid
               }
             })
+
         }
         if (data.status == 200) {
             window.location.href = "/pay/" + data.data

@@ -68,7 +68,6 @@ def oauth_callback():
         db.session.commit()
     login_user(user)
     if user.user_role == UserRole.ADMIN:
-        print("OK")
         return redirect('/admin')
     return redirect("/")
 
@@ -94,19 +93,38 @@ def pay(f_id):
 
 def create_flight_schedule():
     data = request.get_json()
-    try:
-        f = dao.create_flight_sche(airport_from=data['airport_from'], airport_to=data['airport_to'],
-                                   time_start=data['time_start'],
-                                   time_end=data['time_end'], quantity_ticket_1st=data['quantity_1st'],
-                                   quantity_ticket_2nd=data['quantity_2nd'])
-        for ab in data['ab_list']:
-            bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=f.id, time_stay=ab['ap_stay'],
-                                 note=ab['ap_note'])
-    except Exception as err:
-        return {
-            'status': 500,
-            'data': err
-        }
+    if request.method == 'POST':
+        try:
+            f = dao.create_flight_sche(airport_from=data['airport_from'], airport_to=data['airport_to'],
+                                       time_start=data['time_start'],
+                                       time_end=data['time_end'], quantity_ticket_1st=data['quantity_1st'],
+                                       quantity_ticket_2nd=data['quantity_2nd'])
+            for ab in data['ab_list']:
+                bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=f.id, time_stay=ab['ap_stay'],
+                                     note=ab['ap_note'])
+        except Exception as err:
+            return {
+                'status': 500,
+                'data': err
+            }
+    if request.method == 'PATCH':
+        try:
+
+            f = dao.update_flight_sche(f_id=data['id'], airport_from=data['airport_from'],
+                                       airport_to=data['airport_to'],
+                                       time_start=data['time_start'],
+                                       time_end=data['time_end'], quantity_ticket_1st=data['quantity_1st'],
+                                       quantity_ticket_2nd=data['quantity_2nd'])
+            f = dao.del_abw_list(f.id)
+            for ab in data['ab_list']:
+                print(ab)
+                bwa = dao.create_bwa(airport_id=ab['ap_id'], flight_sche_id=data['id'], time_stay=ab['ap_stay'],
+                                     note=ab['ap_note'])
+        except Exception as err:
+            return {
+                'status': 500,
+                'data': err
+            }
     return {
         'status': 200,
         'data': 'success'
@@ -139,14 +157,14 @@ def create_form_ticket(f_id):
         }
 
     if data['user_role'] == 'UserRole.USER':
-        check_time = dao.check_time_customer(data['f_id'])
+        check_time = dao.check_time(data['f_id'])
         if not check_time:
             return {
                 'status': 500,
                 'data': "Không thể đặt vé cách giờ bay trước 12 tiếng!"
             }
     else:
-        check_time = dao.check_time_staff(data['f_id'])
+        check_time = dao.check_time(data['f_id'], is_user=False)
         if not check_time:
             return {
                 'status': 500,
@@ -159,16 +177,16 @@ def create_form_ticket(f_id):
     }
 
 
-def pay_ticket(f_id, is_staff):
+def pay_ticket(f_id, is_staff=False):
     data = request.get_json()
-    if is_staff is None:
+    print(data)
+    if not is_staff:
         check_paypal = dao.check_paypal(number_card=data['number_card'], mm_yy=data['mmYY'], cvc_code=data['cvcCode'],
                                         name=data['name'])
     else:
         check_paypal = True
     if check_paypal:
         data_ticket = session.get('form_ticket')
-        print(data_ticket)
         data_customer = data_ticket['customers_info'][0]['data']
         for c in data_customer:
             package_price = 0
@@ -204,3 +222,35 @@ def delete_flight_schedule(f_id):
         'data': f.id
     }
 
+
+def confirm_user():
+    data = request.get_json()
+    u = dao.confirm_user(u_id=current_user.id, password=data['password'])
+    if u:
+        return {
+            'status': 200,
+            'data': 'success'
+        }
+    return {
+        'status': 500,
+        'data': 'error'
+    }
+
+
+def create_admin_rules():
+    data = request.get_json()
+    ar = dao.create_admin_rules(min_time_flight_sche=data['min_time_flight_sche'],
+                                min_time_stay_airport=data['min_time_stay_airport'],
+                                max_time_stay_airport=data['max_time_stay_airport'],
+                                max_between_airport_quantity=data['max_between_airport_quantity'],
+                                customer_time_ticket=data['customer_time_ticket'],
+                                staff_time_ticket=data['staff_time_ticket'])
+    if ar is None:
+        return {
+            'status': 500,
+            'data': 'error'
+        }
+    return {
+        'status': 200,
+        'data': 'success'
+    }

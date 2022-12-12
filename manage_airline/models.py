@@ -70,6 +70,8 @@ class BetweenAirport(BaseModel):
     time_stay = Column(Float, nullable=False)
     note = Column(String(100))
 
+    is_deleted = Column(Boolean, default=False)
+
 
 class Ticket(BaseModel):
     author_id = Column(Integer, ForeignKey(User.id))
@@ -87,11 +89,12 @@ class Ticket(BaseModel):
 
 class ADMINRules(BaseModel):
     min_time_flight_sche = Column(Float, default=0.5)
-    max_between_airport = Column(Float, default=2)
+    max_between_airport_quantity = Column(Float, default=2)
     min_time_stay_airport = Column(Float, default=0.33)
     max_time_stay_airport = Column(Float, default=0.5)
     customer_time_ticket = Column(Float, default=12)
     staff_time_ticket = Column(Float, default=4)
+    created_at = Column(DateTime, default=datetime.datetime.now())
 
 
 if __name__ == '__main__':
@@ -101,8 +104,8 @@ if __name__ == '__main__':
         # db.session.add(u)
         # db.session.commit()
 
-        # a = ADMINRules()
-        # db.session.add(a)
-        # db.session.commit()
+        a = ADMINRules()
+        db.session.add(a)
+        db.session.commit()
 
         pass
