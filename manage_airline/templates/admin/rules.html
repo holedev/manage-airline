@@ -1,0 +1,154 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<h1 class="text-center text-success my-3">Quy định chuyến bay</h1>
+<h3 class="mt-3">Chuyến bay</h3>
+<form>
+    <div class="row">
+        <div class="col col-lg-12">
+            <label for="min-time-fly" class="form-label">Thời gian bay tối thiểu của chuyến bay (giờ):</label>
+            <input value="{{ rules['min_time_flight_sche'] }}" name="min-time-fly" required type="number"
+                   class="form-control" id="min-time-fly">
+        </div>
+    </div>
+    <h3 class="mt-3">Đặt vé</h3>
+    <div class="row mt-3">
+        <div class="col col-lg-6">
+            <label for="customer-time-ticket" class="form-label">Thời gian tối thiểu trước lúc khởi hành (<span
+                    class="text-danger">KHÁCH HÀNG</span>) (giờ):</label>
+            <input value="{{ rules['customer_time_ticket'] }}" name="customer-time-ticket" required type="number"
+                   class="form-control" id="customer-time-ticket">
+        </div>
+        <div class="col col-lg-6">
+            <label for="staff-time-ticket" class="form-label">Thời gian tối thiểu trước lúc khởi hành (<span
+                    class="text-danger">NHÂN VIÊN</span>) (giờ):</label>
+            <input value="{{ rules['staff_time_ticket'] }}" name="staff-time-ticket" required type="number"
+                   class="form-control" id="staff-time-ticket">
+        </div>
+    </div>
+    <h3 class="mt-3">Sân bay trung gian</h3>
+    <div class="row mt-3">
+        <div class="col col-lg-4">
+            <label for="between-airport-quantity" class="form-label">Số sân bay tối đa:</label>
+            <input value="{{ rules['max_between_airport_quantity'] }}" name="between-airport-quantity" required
+                   type="number" class="form-control"
+                   id="between-airport-quantity">
+        </div>
+        <div class="col col-lg-4">
+            <label for="min-time-stay-airport" class="form-label">Thời gian dừng tối thiểu (giờ):</label>
+            <input value="{{ rules['min_time_stay_airport'] }}" name="min-time-stay-airport" required type="number"
+                   class="form-control" id="min-time-stay-airport">
+        </div>
+        <div class="col col-lg-4">
+            <label for="max-time-stay-airport" class="form-label">Thời gian dừng tối đa (giờ):</label>
+            <input value="{{ rules['max_time_stay_airport'] }}" name="max-time-stay-airport" required type="number"
+                   class="form-control" id="max-time-stay-airport">
+        </div>
+    </div>
+    <button data-user="{{ current_user.get_id() }}" id="submit-btn" class="btn btn-primary w-100 mt-3">Thay đổi</button>
+</form>
+<table class="mt-4 table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th title="Thời gian bay tối thiểu" scope="col">TGBTT</th>
+        <th title="Thời gian khách hàng đặt vé tối thiểu" scope="col">TTKHDVTT</th>
+        <th title="Thời gian nhân viên đặt vé tối thiểu" scope="col">TGNVDVTT</th>
+        <th title="Số sân bay trung gian tối đa" scope="col">SSBTGTD</th>
+        <th title="Thời gian dừng sân bay trung gian tối thiểu" scope="col">TGDSBTGTT</th>
+        <th title="Thời gian dừng sân bay trung gian tối đa" scope="col">TGDSBTGTD</th>
+        <th scope="col">Thời gian tạo</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for r in rules_list %}
+    <tr>
+        <th scope="col">{{r.id}}</th>
+        <th scope="col">{{r.min_time_flight_sche}}</th>
+        <th scope="col">{{r.customer_time_ticket}}</th>
+        <th scope="col">{{r.staff_time_ticket}}</th>
+        <th scope="col">{{r.max_between_airport_quantity}}</th>
+        <th scope="col">{{r.min_time_stay_airport}}</th>
+        <th scope="col">{{r.max_time_stay_airport}}</th>
+        <th scope="col">{{r.created_at}}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<script>
+    const submitBtn = document.querySelector('#submit-btn')
+
+    const authUser = (status, data) => {
+        const title = status == 'error' ? 'Mật khẩu không chính xác! Vui lòng thử lại!' : 'Xác nhận mật khẩu'
+        return Swal.fire({
+          title,
+          input: 'password',
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
+          showCancelButton: true,
+          confirmButtonText: 'Xác nhận',
+          showLoaderOnConfirm: true,
+          preConfirm: (password) => {
+            return fetch(`/api/user/confirm`, {
+                method: 'post',
+                body: JSON.stringify({
+                    password: password.trim()
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+              .then(response => response.json())
+          },
+          allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+                if (result?.value.status == 200) {
+                    fetch("/api/admin_rules", {
+                        method: 'post',
+                        body: JSON.stringify(data),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        window.location.reload()
+                    })
+                    .catch(err => {
+                        return Swal.fire("Lỗi", err.response, "error");
+                    })
+                }
+                if (result?.value.status == 500) {
+                    authUser("error", data)
+                }
+            }
+          })
+    }
+
+    submitBtn.onclick = (e) => {
+        e.preventDefault()
+        const inpR = document.querySelectorAll("form input[required]")
+        inpR.forEach(inp => {
+            if (!inp.value) {
+                inp.focus()
+                return Swal.fire("Lỗi", "Vui lòng điền đầy đủ thông tin!", "error");
+            }
+        })
+
+        const data = {
+            min_time_flight_sche: inpR[0].value,
+            max_between_airport_quantity: inpR[3].value,
+            min_time_stay_airport: inpR[4].value,
+            max_time_stay_airport: inpR[5].value,
+            customer_time_ticket: inpR[1].value,
+            staff_time_ticket: inpR[2].value,
+        }
+        authUser('success',data)
+    }
+
+</script>
+{% endblock %}
