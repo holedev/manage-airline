@@ -26,7 +26,7 @@
         <td>GIÁ TIỀN: <span class="fw-bold">{{ "{:,.0f}".format(t['ticket_price']) }} VND</span></td>
     </tr>
     <tr>
-        <td colspan="2">THỜI GIAN ĐẶT VÉ: <span class="fw-bold">{{ moment(t['created_at']).format('LLLL') }}</span></td>
+        <td colspan="2">THỜI GIAN ĐẶT VÉ: <span class="fw-bold">{{ moment(t['created_at'], local=True).format('LLLL') }}</span></td>
     </tr>
     </tbody>
 </table>

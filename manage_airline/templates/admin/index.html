@@ -16,6 +16,8 @@
     Chào <span class="text-danger">{{ current_user.fullname }}</span>
 </h3>
 {% if current_user.user_role==user_role.ADMIN %}
+
+{% if f_list %}
 <h2 class="text-center">Danh sách lịch chuyến bay chờ duyệt</h2>
 <datalist id="airports">
     {% for a in a_list %}
@@ -117,6 +119,9 @@
     {% endfor %}
     </tbody>
 </table>
+{% else %}
+<h3 class="text-center text-info">Không có lịch chuyến bay nào chờ duyệt!</h3>
+{% endif %}
 {% endif %}
 {% endif %}
 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>

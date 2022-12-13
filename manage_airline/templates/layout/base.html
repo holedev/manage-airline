@@ -6,7 +6,7 @@
         {% block title %}E-commerce Website{% endblock %}
     </title>
     {{ moment.include_moment() }}
-    {{ moment.locale(auto_detect=True) }}
+    {{ moment.locale(language='vi') }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"
             integrity="sha512-CryKbMe7sjSCDPl18jtJI5DR5jtkUWxPXWaLCst6QjH8wxDexfRJic2WRmRXmstr2Y8SxDDWuBO6CQC6IE4KTA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -21,15 +21,12 @@
             crossorigin="anonymous"></script>
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
     <style>
         ::-webkit-scrollbar {
             display: none;
         }
-
-
-
-
 
     </style>
     {% block js %}{% endblock %}
@@ -44,5 +41,9 @@
 {% block footer %}
 {% include 'layout/footer.html' %}
 {% endblock %}
+<div style="background-color: rgba(0,0,0,0.6); position: fixed; inset: 0; display: flex; justify-content: center; align-items: center"
+     class="loading-wrap">
+    <div class="spinner-grow text-light" role="status"></div>
+</div>
 </body>
 </html>

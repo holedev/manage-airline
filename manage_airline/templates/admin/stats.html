@@ -1,0 +1,113 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+{% if data_stats.data %}
+<div class="d-flex align-items-center justify-content-between">
+    <h1 class="text-center text-success my-3">Thống kê báo cáo</h1>
+    <div class="d-flex align-items-center">
+        <select class="select-type form-control" style="width: 100px">
+            <option value="1" selected>Bảng</option>
+            <option value="2">Biểu đồ</option>
+        </select>
+        <select class="ml-3 select-month form-control" style="width: 120px">
+            <option value="0" selected>Toàn bộ</option>
+            <option value="1">Tháng 1</option>
+            <option value="2">Tháng 2</option>
+            <option value="3">Tháng 3</option>
+            <option value="4">Tháng 4</option>
+            <option value="5">Tháng 5</option>
+            <option value="6">Tháng 6</option>
+            <option value="7">Tháng 7</option>
+            <option value="8">Tháng 8</option>
+            <option value="9">Tháng 9</option>
+            <option value="10">Tháng 10</option>
+            <option value="11">Tháng 11</option>
+            <option value="12">Tháng 12</option>
+        </select>
+    </div>
+</div>
+<table class="table-striped table mt-4" style="border: 1px solid #ccc;">
+    <thead>
+    <tr>
+        <th scope="col" class="title text-center" colspan="4">BÁO CÁO DOANH THU TOÀN BỘ</th>
+    </tr>
+    <tr class="text-center font-weight-bold">
+        <td scope="col">Tuyến bay</span>
+        </td>
+        <td scope="col">Doanh thu (VNĐ)</td>
+        <td scope="col">Số vé bán</td>
+        <td scope="col">Tỉ lệ (%)</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in data_stats.data %}
+    <tr class="r-table text-center">
+        <td class="" scope="col">{{ d.airport_from.name }} → {{ d.airport_to.name }}</td>
+        <td data-price="{{ d.total_price }}" class="price" scope="col">{{ d.total_price }}</td>
+        <td scope="col">{{ d.total_ticket }}</td>
+        <td scope="col">{{ "{:,.2f}".format(d.price_rate) }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr>
+        <th scope="col" class="text-center font-weight-normal" colspan="4">Tổng doanh thu: <span
+                data-price="{{ data_stats['total_price'] }}" class="price price-total font-weight-bold"
+                style="font-size: 20px">{{ data_stats['total_price'] }}</span>
+            VNĐ
+        </th>
+    </tr>
+    </tfoot>
+</table>
+<div id="wrapCanvas" class="mt-4 d-flex justify-content-center">
+    <canvas class="w-50 h-50" id="canvas"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/stats.js') }}"></script>
+<script>
+    const priceList = document.querySelectorAll(".price")
+    const selectType = document.querySelector('.select-type')
+    const selectMonth = document.querySelector('.select-month')
+    const table = document.querySelector('.table')
+
+    const labels = []
+    const data = {
+        prices: [],
+        tickets: [],
+        rates: []
+    }
+
+    {% for d in data_stats.data %}
+        labels.push('{{ d.airport_from.name }} → {{ d.airport_to.name }}')
+        data.prices.push('{{ d.total_price }}')
+        data.tickets.push('{{ d.total_ticket }}')
+        data.rates.push('{{ "{:,.2f}".format(d.price_rate) }}')
+    {% endfor %}
+
+    priceList.forEach(p => {
+        if (p.innerHTML != 0) {
+            p.innerHTML = new Intl.NumberFormat().format(parseInt(p.dataset.price))
+        }
+    })
+
+    selectType.onchange = () => {
+        checkType()
+    }
+
+    selectMonth.onchange = (e) => {
+        const val = e.target.value
+        switch(val) {
+            default:
+                getData(val)
+                break;
+        }
+    }
+
+    setStatus(canvas, 'none')
+    drawStats(canvas, labels, data)
+
+</script>
+{% else %}
+<h3 class="text-danger text-center mt-3">Chưa có dữ liệu để thống kê!</h3>
+{% endif %}
+{% endblock %}

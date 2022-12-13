@@ -16,6 +16,7 @@ Flask-Admin==1.6.0
 Flask-BabelEx==0.9.4
 Flask-Dance==6.2.0
 Flask-Login==0.6.2
+Flask-Moment==1.0.5
 Flask-OAuth==0.12
 Flask-SQLAlchemy==3.0.2
 google-auth==2.15.0
@@ -31,6 +32,7 @@ MarkupSafe==2.1.1
 nodeenv==1.7.0
 oauth2==1.9.0.post1
 oauthlib==3.2.2
+packaging==22.0
 platformdirs==2.5.4
 pyasn1==0.4.8
 pyasn1-modules==0.2.8

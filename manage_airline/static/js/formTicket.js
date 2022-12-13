@@ -25,15 +25,15 @@ addBtn.onclick = () => {
             <div class="customer-info d-flex gap-4 bg-white p-2 rounded-2 mt-3">
                 <div class="flex-grow-1 mb-3">
                     <label for="fullname-${current + 1}" class="fw-bold form-label">Họ và tên: </label>
-                    <input required type="text" name="fullname-${current + 1}" class="fullname-${current + 1} form-control" id="fullname-${current + 1}">
+                    <input placeholder="Nguyễn Văn A" required type="text" minlength="4" name="fullname-${current + 1}" class="fullname-${current + 1} form-control" id="fullname-${current + 1}">
                 </div>
                 <div class="flex-grow-1 mb-3">
                     <label for="phone-${current + 1}" class="fw-bold form-label">Số điện thoại: </label>
-                    <input required type="text" name="phone-${current + 1}" class="phone-${current + 1} form-control" id="phone-${current + 1}">
+                    <input placeholder="XXXXXXXXXX" required type="text" minlength="10" maxlength="10" name="phone-${current + 1}" class="phone-${current + 1} form-control" id="phone-${current + 1}">
                 </div>
                 <div class="flex-grow-1 mb-3">
                     <label for="id-${current + 1}" class="fw-bold form-label">CMND/CCCD: </label>
-                    <input required type="text" name="id-${current + 1}" class="id-${current + 1} form-control" id="id-${current + 1}">
+                    <input placeholder="XXXXXXXXXX" required type="text" minlength="10" maxlength="10" name="id-${current + 1}" class="id-${current + 1} form-control" id="id-${current + 1}">
                 </div>
             </div>
         `
@@ -67,11 +67,18 @@ select.onchange = (e) => {
 
 submitBtn.onclick = (e) => {
     e.preventDefault()
-    const inputList = document.querySelectorAll('form input')
+    const inputList = document.querySelectorAll('form input[required]')
     const inpErr = Array.from(inputList).find(inp => !inp.value)
     if (inpErr) {
         inpErr.focus()
         return Swal.fire("Lỗi", "Vui lòng nhập đủ thông tin!", "error")
+    }
+
+    const inpValidateErr = Array.from(inputList).find(inp => inp.value.length < inp.getAttribute('minlength'))
+
+    if (inpValidateErr) {
+        inpValidateErr.focus()
+        return Swal.fire("Lỗi", `Vui lòng nhập ít nhất ${inpValidateErr.getAttribute('minlength')} kí tự!`, "error")
     }
 
     function findInp(name) {
@@ -113,8 +120,6 @@ submitBtn.onclick = (e) => {
         user_role: submitBtn.dataset.user
     }
 
-
-
     fetch(`/api/form_ticket/${fId}`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -124,7 +129,8 @@ submitBtn.onclick = (e) => {
     })
     .then(res => res.json())
     .then(data => {
-        if (data.status == 200 && submitBtn.dataset.user != 'UserRole.USER') {
+        console.log(data)
+        if (data.status == 200 && (submitBtn.dataset.user == 'UserRole.STAFF' || submitBtn.dataset.user == 'UserRole.STAFF')) {
             const inputList = document.querySelectorAll('form input')
             Array.from(inputList).forEach(inp => inp.value=null)
             select.value=0

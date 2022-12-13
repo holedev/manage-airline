@@ -6,3 +6,12 @@ function validateDatetime(datetime) {
         return false
     return true
 }
+
+function setLoading(status) {
+    const loading = document.querySelector(".loading-wrap")
+    status === 0 ? loading.style.display = "none" : loading.style.display = 'flex'
+}
+
+window.onload = () => {
+    setLoading(0)
+}

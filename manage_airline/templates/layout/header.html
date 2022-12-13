@@ -14,7 +14,7 @@
                         {{ current_user.fullname }}
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        {% if current_user.user_role == user_role.ADMIN %}
+                        {% if current_user.user_role != user_role.USER %}
                         <a href="/admin" class="dropdown-item">Quản lý</a>
                         {% endif %}
                         <a href="/logout" class="dropdown-item">Đăng xuất</a>

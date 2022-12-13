@@ -36,13 +36,15 @@ def register():
         confirm = request.form['confirm']
         if password.__eq__(confirm):
             try:
-                dao.register(fullname=request.form['fullname'],
-                             username=request.form['username'],
-                             password=password)
+                r = dao.register(fullname=request.form['fullname'],
+                                 username=request.form['username'],
+                                 password=password)
+                if r:
+                    return redirect('/login')
+                err_msg='Tên đăng nhập đã tồn tại!'
 
-                return redirect('/login')
-            except:
-                err_msg = 'Đã có lỗi xảy ra! Vui lòng quay lại sau!'
+            except Exception as err:
+                err_msg = 'Lỗi server!'
         else:
             err_msg = 'Mật khẩu không khớp!'
 
@@ -155,15 +157,7 @@ def create_form_ticket(f_id):
             'status': 500,
             'data': "Chỉ có thể đặt tối đa %s vé!" % remain_ticket
         }
-
-    if data['user_role'] == 'UserRole.USER':
-        check_time = dao.check_time(data['f_id'])
-        if not check_time:
-            return {
-                'status': 500,
-                'data': "Không thể đặt vé cách giờ bay trước 12 tiếng!"
-            }
-    else:
+    if data['user_role'] == 'UserRole.STAFF' or data['user_role'] == 'UserRole.ADMIN':
         check_time = dao.check_time(data['f_id'], is_user=False)
         if not check_time:
             return {
@@ -171,6 +165,13 @@ def create_form_ticket(f_id):
                 'data': "Không thể đặt vé cách giờ bay trước 4 tiếng!"
             }
         pay_ticket(data['f_id'], is_staff=True)
+    else:
+        check_time = dao.check_time(data['f_id'])
+        if not check_time:
+            return {
+                'status': 500,
+                'data': "Không thể đặt vé cách giờ bay trước 12 tiếng!"
+            }
     return {
         'status': 200,
         'data': data['f_id']
@@ -179,7 +180,6 @@ def create_form_ticket(f_id):
 
 def pay_ticket(f_id, is_staff=False):
     data = request.get_json()
-    print(data)
     if not is_staff:
         check_paypal = dao.check_paypal(number_card=data['number_card'], mm_yy=data['mmYY'], cvc_code=data['cvcCode'],
                                         name=data['name'])
@@ -192,9 +192,19 @@ def pay_ticket(f_id, is_staff=False):
             package_price = 0
             if c['id'] == 2:
                 package_price = data_ticket['package_price']
-            c = dao.create_ticket(u_id=current_user.get_id(), f_id=data_ticket['f_id'],
-                                  t_type=data_ticket['ticket_type'], t_package_price=package_price, c_name=c['name'],
-                                  c_phone=c['phone'], c_id=c['id_customer'])
+            u_id = current_user.get_id()
+            if not u_id:
+                u_id = 1
+            try:
+                c = dao.create_ticket(u_id=u_id, f_id=data_ticket['f_id'],
+                                      t_type=data_ticket['ticket_type'], t_package_price=package_price,
+                                      c_name=c['name'],
+                                      c_phone=c['phone'], c_id=c['id_customer'])
+            except:
+                return {
+                    'status': 500,
+                    'data': 'error'
+                }
     return {
         'status': 200,
         'data': 'success'
@@ -254,3 +264,9 @@ def create_admin_rules():
         'status': 200,
         'data': 'success'
     }
+
+
+def get_stats(month):
+    if int(month) == 0:
+        return dao.get_data_stats_json_list()
+    return dao.get_data_stats_json_list(m=month)

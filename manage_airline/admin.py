@@ -12,6 +12,11 @@ class AuthenticatedView(BaseView):
         return current_user.is_authenticated
 
 
+class AuthenticatedAdminView(BaseView):
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
+
+
 class AuthenticatedAdmin(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated and current_user.user_role == UserRole.ADMIN
@@ -78,10 +83,18 @@ class HomeView(AuthenticatedView):
         return redirect('/')
 
 
+class StatsView(AuthenticatedAdminView):
+    @expose('/')
+    def index(self):
+        data_stats = dao.get_data_stats_json_list()
+        return self.render('admin/stats.html', data_stats=data_stats)
+
+
 admin = Admin(app=app, name='Quản lý', template_mode='bootstrap4', index_view=MyAdminView())
 admin.add_view(UserView(User, db.session, name="Người dùng"))
-admin.add_view(RulesView(ADMINRules, db.session, name='Quy định'))
 admin.add_view(AirportView(Airport, db.session, name='Sân bay'))
+admin.add_view(RulesView(ADMINRules, db.session, name='Quy định'))
 admin.add_view(FlightScheView(FlightSchedule, db.session, name='Lịch chuyến bay'))
+admin.add_view(StatsView(name="Thống kê báo cáo"))
 admin.add_view(HomeView(name='Trang chủ người dùng'))
 admin.add_view(LogoutView(name='Đăng xuất'))

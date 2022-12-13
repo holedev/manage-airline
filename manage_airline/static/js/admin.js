@@ -55,6 +55,7 @@ btnAccepts.forEach(btn => {
         })
     }
 })
+
 btnDels.forEach(btn => {
     btn.onclick = (e) => {
         e.stopPropagation()
@@ -131,6 +132,7 @@ const addAirportBw = (max) => {
         document.querySelector('.del-abw').innerHTML = `Xoá STG (${current + 1})`
     }
 }
+
 const delAirportBw = () => {
     const abws = document.querySelectorAll(".airport-between")
     const btn = document.querySelector('.del-abw')

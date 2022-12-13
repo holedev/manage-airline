@@ -16,13 +16,13 @@
         <!-- Username input -->
         <div class="form-outline mb-2">
             <label class="form-label" for="username">Tên đăng nhập hoặc email:</label>
-            <input required autofocus type="text" name="username" id="username" class="form-control"/>
+            <input required minlength="4" autofocus type="text" name="username" id="username" class="form-control"/>
         </div>
 
         <!-- Password input -->
         <div class="form-outline mb-4">
             <label class="form-label" for="password">Mật khẩu:</label>
-            <input required type="password" name="password" id="password" class="form-control"/>
+            <input required minlength="4" type="password" name="password" id="password" class="form-control"/>
         </div>
 
         <!-- Submit button -->
@@ -42,5 +42,15 @@
         </div>
     </form>
 </div>
+<script>
+    const uName = document.querySelector('#username')
+    const pw = document.querySelector('#password')
 
+    document.querySelector('form').onsubmit = (e) => {
+        if (uName.value.trim().length < 4 || pw.value.trim().length < 4) {
+            e.preventDefault()
+        }
+    }
+
+</script>
 {% endblock %}

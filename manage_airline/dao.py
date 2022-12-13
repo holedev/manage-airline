@@ -1,5 +1,7 @@
 from flask import request, session
-from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport, Ticket, ADMINRules
+from sqlalchemy import func, desc, extract, and_
+
+from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport, Ticket, ADMINRules, Customer
 from manage_airline import db
 import hashlib
 import datetime
@@ -22,10 +24,14 @@ def get_user_by_id(user_id):
 
 
 def register(fullname, username, password):
+    u = User.query.filter(User.username.__eq__(username))
+    if u:
+        return False
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     u = User(fullname=fullname, username=username.strip(), password=password)
     db.session.add(u)
     db.session.commit()
+    return True
 
 
 def auth_user(username, password):
@@ -224,17 +230,24 @@ def check_paypal(number_card, mm_yy, cvc_code, name):
     return False
 
 
-def create_ticket(u_id, f_id, t_type, t_package_price, c_name, c_phone, c_id):
+def create_customer(c_name, c_phone, c_id):
+    c = Customer(customer_name=c_name, customer_phone=c_phone, customer_id=c_id)
+    db.session.add(c)
+    db.session.commit()
+    return c
+
+
+def create_ticket(f_id, t_type, t_package_price, c_name, c_phone, c_id, u_id):
     f = FlightSchedule.query.filter(FlightSchedule.id.__eq__(f_id), FlightSchedule.is_active.__eq__(True),
                                     FlightSchedule.is_deleted.__eq__(False)).first()
     if int(t_type) == 1:
         f.quantity_ticket_1st_booked = f.quantity_ticket_1st_booked + 1
     if int(t_type) == 2:
         f.quantity_ticket_2nd_booked = f.quantity_ticket_2nd_booked + 1
-    db.session.commit()
-    t = Ticket(author_id=u_id, flight_sche_id=f_id, ticket_price=f.price + t_package_price,
-               ticket_type=t_type, ticket_package_price=t_package_price, customer_name=c_name, customer_phone=c_phone,
-               customer_id=c_id)
+
+    c = create_customer(c_name=c_name, c_phone=c_phone, c_id=c_id)
+    t = Ticket(author_id=u_id, flight_sche_id=f_id, customer_id=c.id, ticket_price=f.price + t_package_price,
+               ticket_type=t_type, ticket_package_price=t_package_price, created_at=datetime.datetime.now())
     db.session.add(t)
     db.session.commit()
     return t
@@ -242,6 +255,7 @@ def create_ticket(u_id, f_id, t_type, t_package_price, c_name, c_phone, c_id):
 
 def get_ticket_json(t_id):
     t = Ticket.query.filter(Ticket.id.__eq__(t_id)).first()
+    c = Customer.query.filter(Customer.id.__eq__(t_id)).first()
     return {
         'id': t.id,
         'author_id': t.author_id,
@@ -249,9 +263,9 @@ def get_ticket_json(t_id):
         'ticket_price': t.ticket_price,
         'ticket_type': t.ticket_type,
         'ticket_package_price': t.ticket_package_price,
-        'customer_name': t.customer_name,
-        'customer_phone': t.customer_phone,
-        'customer_id': t.customer_id,
+        'customer_name': c.customer_name,
+        'customer_phone': c.customer_phone,
+        'customer_id': c.customer_id,
         'created_at': t.created_at
     }
 
@@ -262,7 +276,7 @@ def get_ticket_list(u_id):
 
 
 def get_ticket_list_json(u_id):
-    t_list = Ticket.query.filter(Ticket.author_id.__eq__(u_id)).all()
+    t_list = Ticket.query.filter(Ticket.author_id.__eq__(u_id)).order_by(Ticket.created_at.desc()).all()
     t_list_json = []
     for t in t_list:
         t_list_json.append(get_ticket_json(t.id))
@@ -313,8 +327,58 @@ def get_admin_rules_list():
     return ADMINRules.query.order_by(ADMINRules.created_at.desc()).all()
 
 
+def get_data_stats():
+    q = db.session.query(FlightSchedule.airport_from, FlightSchedule.airport_to, func.count(Ticket.id),
+                         func.sum(Ticket.ticket_price).label("total_price")) \
+        .join(Ticket, Ticket.flight_sche_id.__eq__(FlightSchedule.id), isouter=True)
+    q = q.group_by(FlightSchedule.airport_from, FlightSchedule.airport_to).order_by(desc("total_price"))
+    return q.all()
+
+
+def get_data_stats_json(af_id, at_id, t_ticket, t_price):
+    return {
+        "airport_from": get_airport_json(af_id),
+        "airport_to": get_airport_json(at_id),
+        "total_ticket": int(t_ticket),
+        "total_price": t_price or 0,
+    }
+
+
+def get_data_stats_by_month(m):
+    q = db.session.query(FlightSchedule.airport_from, FlightSchedule.airport_to, func.count(Ticket.id),
+                         func.sum(Ticket.ticket_price).label("total_price")) \
+        .join(Ticket, and_(Ticket.flight_sche_id.__eq__(FlightSchedule.id), extract('month', Ticket.created_at) == m),
+              isouter=True)
+    q = q.group_by(FlightSchedule.airport_from, FlightSchedule.airport_to).order_by(desc("total_price"))
+    return q.all()
+
+
+def get_data_stats_json_list(m=None):
+    if m is None:
+        stats = get_data_stats()
+    else:
+        stats = get_data_stats_by_month(m)
+    stats_list = []
+    total_price = 0
+    total_ticket = 0
+    for s in stats:
+        if s[3]:
+            total_price = total_price + int(s[3])
+        total_ticket = total_ticket + int(s[2])
+        obj = get_data_stats_json(s[0], s[1], s[2], s[3])
+        stats_list.append(obj)
+        if total_price:
+            for sl in stats_list:
+                sl['price_rate'] = float(sl['total_price'] / total_price) * 100
+    return {
+        'data': stats_list,
+        'total_price': total_price,
+        'total_ticket': total_ticket
+    }
+
+
 if __name__ == '__main__':
     from manage_airline import app
 
     with app.app_context():
-        print(confirm_user(1, '123456'))
+        print(get_ticket_list_json(1))

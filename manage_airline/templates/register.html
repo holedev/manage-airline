@@ -11,19 +11,19 @@
         <!-- Username input -->
         <div class="form-outline mb-2">
             <label class="form-label" for="username">Tên đăng nhập hoặc email:</label>
-            <input required autofocus name="username" type="text" id="username" class="form-control"/>
+            <input required minlength="4" autofocus name="username" type="text" id="username" class="form-control"/>
         </div>
 
         <!-- Fullname input -->
         <div class="form-outline mb-2">
             <label class="form-label" for="fullname">Họ và tên:</label>
-            <input required name="fullname" type="text" id="fullname" class="form-control"/>
+            <input minlength="4" required name="fullname" type="text" id="fullname" class="form-control"/>
         </div>
 
         <!-- Password input -->
         <div class="form-outline mb-2">
             <label class="form-label" for="password">Mật khẩu:</label>
-            <input required name="password" type="password" id="password" class="form-control"/>
+            <input minlength="4" required name="password" type="password" id="password" class="form-control"/>
         </div>
 
         <!-- Confirm password input -->
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Submit button -->
-        <button type="submit" class="w-100 btn btn-primary btn-block mb-4">Đăng ký</button>
+        <button disabled type="submit" class="w-100 btn btn-primary btn-block mb-4">Đăng ký</button>
 
         <!-- Sign up buttons -->
         <div class="text-center">
@@ -47,5 +47,29 @@
         {% endif %}
     </form>
 </div>
+<script>
+    const uName = document.querySelector('#username')
+    const fName = document.querySelector('#fullname')
+    const pw = document.querySelector('#password')
+    const cf = document.querySelector('#confirm')
+    const submitBtn = document.querySelector('button[type=submit]')
 
+    cf.oninput = (e) => {
+        if (cf.value.trim() === pw.value) {
+            submitBtn.disabled = false
+            cf.style.border = 'none'
+        } else {
+            cf.style.border = '1px solid red'
+            submitBtn.disabled = true
+        }
+    }
+
+    document.querySelector('form').onsubmit = (e) => {
+        if (uName.value.trim().length < 4 || fName.value.trim().length < 4 || pw.value.trim().length < 4) {
+            e.preventDefault()
+            Swal.fire("Lỗi", "Các trường phải gồm ít nhất 4 ký tự!", "error")
+        }
+    }
+
+</script>
 {% endblock %}

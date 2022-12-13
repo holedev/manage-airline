@@ -29,6 +29,8 @@ app.add_url_rule('/api/user/confirm', 'confirm_user', controllers.confirm_user,
                  methods=['post'])
 app.add_url_rule('/api/admin_rules', 'create_admin_rules', controllers.create_admin_rules,
                  methods=['post'])
+app.add_url_rule('/api/get_stats/<int:month>', 'get_stats', controllers.get_stats,
+                 methods=['post'])
 
 
 @login.user_loader

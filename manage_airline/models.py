@@ -73,17 +73,19 @@ class BetweenAirport(BaseModel):
     is_deleted = Column(Boolean, default=False)
 
 
-class Ticket(BaseModel):
-    author_id = Column(Integer, ForeignKey(User.id))
-    flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
-    ticket_price = Column(Integer, nullable=False)
-    ticket_type = Column(Integer, nullable=False)
-    ticket_package_price = Column(Integer, default=0)
-
+class Customer(BaseModel):
     customer_name = Column(String(100), nullable=False)
     customer_phone = Column(String(10), nullable=False)
     customer_id = Column(String(10), nullable=False)
 
+
+class Ticket(BaseModel):
+    author_id = Column(Integer, ForeignKey(User.id), nullable=True)
+    customer_id = Column(Integer, ForeignKey(Customer.id))
+    flight_sche_id = Column(Integer, ForeignKey(FlightSchedule.id))
+    ticket_price = Column(Integer, nullable=False)
+    ticket_type = Column(Integer, nullable=False)
+    ticket_package_price = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.datetime.now())
 
 
@@ -100,12 +102,29 @@ class ADMINRules(BaseModel):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # u = User(fullname='ADMIN', username='admin', password=password, user_role=UserRole.ADMIN)
-        # db.session.add(u)
+
+        # a = User(fullname='Quản trị viên', username='anonymous', user_role=UserRole.ADMIN)
+        # s = User(fullname='Nhân viên', username='staff', user_role=UserRole.STAFF)
+        # u = User(fullname='Người dùng', username='user', user_role=UserRole.USER)
+        # db.session.add_all([a, s, u])
         # db.session.commit()
 
-        a = ADMINRules()
-        db.session.add(a)
+        a1 = Airport(name="Tân Sơn Nhất")
+        a2 = Airport(name="Nội Bài")
+        a3 = Airport(name="Côn Đảo")
+        a4 = Airport(name="Cà Mau")
+        a5 = Airport(name="Cần Thơ")
+        a6 = Airport(name="Phú Bài")
+        a7 = Airport(name="Vân Đồn")
+        a8 = Airport(name="Đà Nẵng")
+        a9 = Airport(name="Phú Quốc")
+        a10 = Airport(name="Vinh")
+
+        db.session.add_all([a1, a2, a3, a4, a5, a6, a7, a8, a9, a10])
         db.session.commit()
+
+        # a = ADMINRules()
+        # db.session.add(a)
+        # db.session.commit()
 
         pass
