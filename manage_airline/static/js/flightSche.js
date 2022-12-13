@@ -132,6 +132,7 @@ submitBtn.onclick = (e) => {
     })
     .then(res => res.json())
     .then(data => {
+        window.location.reload()
         return Swal.fire("Thành công", "Thêm lịch chuyến bay thành công!", "success");
     })
 }
