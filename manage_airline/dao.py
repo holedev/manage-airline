@@ -245,8 +245,8 @@ def create_ticket(f_id, t_type, t_package_price, c_name, c_phone, c_id, u_id):
     if int(t_type) == 2:
         f.quantity_ticket_2nd_booked = f.quantity_ticket_2nd_booked + 1
 
-    c = create_customer(c_name=c_name, c_phone=c_phone, c_id=c_id)
-    t = Ticket(author_id=u_id, flight_sche_id=f_id, customer_id=c.id, ticket_price=f.price + t_package_price,
+    cus = create_customer(c_name=c_name, c_phone=c_phone, c_id=c_id)
+    t = Ticket(author_id=u_id, flight_sche_id=f_id, customer_id=cus.id, ticket_price=f.price + t_package_price,
                ticket_type=t_type, ticket_package_price=t_package_price, created_at=datetime.datetime.now())
     db.session.add(t)
     db.session.commit()
@@ -255,7 +255,7 @@ def create_ticket(f_id, t_type, t_package_price, c_name, c_phone, c_id, u_id):
 
 def get_ticket_json(t_id):
     t = Ticket.query.filter(Ticket.id.__eq__(t_id)).first()
-    c = Customer.query.filter(Customer.id.__eq__(t_id)).first()
+    c = Customer.query.filter(Customer.id.__eq__(t.id)).first()
     return {
         'id': t.id,
         'author_id': t.author_id,
