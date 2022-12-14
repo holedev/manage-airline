@@ -1,4 +1,4 @@
-from manage_airline import app, login, controllers
+from manage_airline import app, login, controllers, dao, admin
 from manage_airline.models import UserRole
 
 app.add_url_rule('/', 'index', controllers.index, methods=['get', 'post'])
@@ -47,6 +47,4 @@ def common_attributes():
 
 
 if __name__ == '__main__':
-    from manage_airline.admin import *
-
     app.run(host='localhost', port=5001, debug=True)
