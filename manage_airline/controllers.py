@@ -207,7 +207,9 @@ def pay_ticket(f_id, is_staff=False):
                 }
     return {
         'status': 200,
-        'data': 'success'
+        'data': {
+            'id': u_id
+        }
     }
 
 

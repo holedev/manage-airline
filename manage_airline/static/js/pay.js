@@ -30,7 +30,16 @@ submitBtn.onclick = (e) => {
     })
     .then(res => res.json())
     .then(data => {
-         window.location.href = "/preview_ticket/" + fId
+        switch (data.status) {
+            case 200:
+                window.location.href = "/preview_ticket/" + data.data.id
+                break;
+            case 500:
+                Swal.fire("Lỗi", "Lỗi server!", "error")
+                break;
+            default:
+                break;
+        }
     })
     .catch(err => {
         Swal.fire("Lỗi", "Lỗi server!", "error")

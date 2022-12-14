@@ -90,6 +90,7 @@
           },
           showCancelButton: true,
           confirmButtonText: 'Xác nhận',
+          cancelButtonText: 'Huỷ',
           showLoaderOnConfirm: true,
           preConfirm: (password) => {
             return fetch(`/api/user/confirm`, {
