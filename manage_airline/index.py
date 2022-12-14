@@ -1,4 +1,5 @@
 from manage_airline import app, login, controllers
+from manage_airline.models import UserRole
 
 app.add_url_rule('/', 'index', controllers.index, methods=['get', 'post'])
 
