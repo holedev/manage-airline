@@ -26,12 +26,12 @@ def get_user_by_id(user_id):
 def register(fullname, username, password):
     u = User.query.filter(User.username.__eq__(username))
     if u:
-        return False
+        return True
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
     u = User(fullname=fullname, username=username.strip(), password=password)
     db.session.add(u)
     db.session.commit()
-    return True
+    return False
 
 
 def auth_user(username, password):
