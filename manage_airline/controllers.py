@@ -57,20 +57,23 @@ def login_oauth():
 
 
 def oauth_callback():
-    user_oauth = dao.get_user_oauth()
-    email = user_oauth['email']
-    user = User.query.filter_by(username=email).first()
-    if user is None:
-        import hashlib
-        password = str(hashlib.md5('123456'.encode('utf-8')).hexdigest())
-        fullname = user_oauth['name']
-        image = user_oauth['picture']
-        user = User(fullname=fullname, username=email, password=password, image=image)
-        db.session.add(user)
-        db.session.commit()
-    login_user(user)
-    if user.user_role == UserRole.ADMIN:
-        return redirect('/admin')
+    try:
+        user_oauth = dao.get_user_oauth()
+        email = user_oauth['email']
+        user = User.query.filter_by(username=email).first()
+        if user is None:
+            import hashlib
+            password = str(hashlib.md5('123456'.encode('utf-8')).hexdigest())
+            fullname = user_oauth['name']
+            image = user_oauth['picture']
+            user = User(fullname=fullname, username=email, password=password, image=image)
+            db.session.add(user)
+            db.session.commit()
+        login_user(user)
+        if user.user_role == UserRole.ADMIN:
+            return redirect('/admin')
+    except:
+        return redirect("/")
     return redirect("/")
 
 
