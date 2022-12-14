@@ -36,15 +36,13 @@ def register():
         confirm = request.form['confirm']
         if password.__eq__(confirm):
             try:
-                r = dao.register(fullname=request.form['fullname'],
-                                 username=request.form['username'],
-                                 password=password)
-                if r:
-                    return redirect('/login')
-                err_msg='Tên đăng nhập đã tồn tại!'
+                dao.register(fullname=request.form['fullname'],
+                             username=request.form['username'],
+                             password=password)
 
+                return redirect("/login")
             except Exception as err:
-                err_msg = 'Lỗi server!'
+                err_msg = 'Lỗi server! Không thể đăng ký user!'
         else:
             err_msg = 'Mật khẩu không khớp!'
 
