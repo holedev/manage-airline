@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Enum, DateTime, Time, Float
 from enum import Enum as UserEnum
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from manage_airline import db, app
 from flask_login import UserMixin
 import hashlib

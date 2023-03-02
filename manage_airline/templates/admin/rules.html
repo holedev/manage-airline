@@ -133,22 +133,27 @@
     submitBtn.onclick = (e) => {
         e.preventDefault()
         const inpR = document.querySelectorAll("form input[required]")
+        let err = 0
         inpR.forEach(inp => {
-            if (!inp.value) {
+            console.log(typeof(inp.value))
+            if (inp.value.trim().length == 0) {
+                err = 1
                 inp.focus()
-                return Swal.fire("Lỗi", "Vui lòng điền đầy đủ thông tin!", "error");
+                return Swal.fire("Lỗi!", "Vui lòng nhập đủ thông tin!", "error")
             }
         })
 
-        const data = {
-            min_time_flight_sche: inpR[0].value,
-            max_between_airport_quantity: inpR[3].value,
-            min_time_stay_airport: inpR[4].value,
-            max_time_stay_airport: inpR[5].value,
-            customer_time_ticket: inpR[1].value,
-            staff_time_ticket: inpR[2].value,
+        if (!err) {
+            const data = {
+                min_time_flight_sche: inpR[0].value,
+                max_between_airport_quantity: inpR[3].value,
+                min_time_stay_airport: inpR[4].value,
+                max_time_stay_airport: inpR[5].value,
+                customer_time_ticket: inpR[1].value,
+                staff_time_ticket: inpR[2].value,
+            }
+            authUser('success',data)
         }
-        authUser('success',data)
     }
 
 </script>

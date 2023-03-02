@@ -184,8 +184,14 @@ def check_time(f_id, is_user=True):
     f_ts = f.time_start.timestamp()
     n_ts = datetime.datetime.now().timestamp()
     if is_user:
-        return (f_ts - n_ts) / 3600 > ar.customer_time_ticket
-    return (f_ts - n_ts) / 3600 > ar.staff_time_ticket
+        return {
+            'min': ar.customer_time_ticket,
+            'state': (f_ts - n_ts) / 3600 > ar.customer_time_ticket
+        }
+    return {
+        'min': ar.staff_time_ticket,
+        'state': (f_ts - n_ts) / 3600 > ar.staff_time_ticket
+    }
 
 
 def search_flight_schedule(ap_from, ap_to, time_start, ticket_type):
@@ -377,4 +383,4 @@ if __name__ == '__main__':
     from manage_airline import app
 
     with app.app_context():
-        print(get_ticket_list_json(1))
+        print(check_time(2, is_user=False))

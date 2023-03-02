@@ -101,6 +101,7 @@ submitBtn.onclick = (e) => {
 
     const pathNames = window.location.pathname
     const fId = pathNames[pathNames.length - 1]
+    console.log(pathNames)
 
     const data = {
         contact_info: {
@@ -130,7 +131,7 @@ submitBtn.onclick = (e) => {
     .then(res => res.json())
     .then(data => {
         console.log(data)
-        if (data.status == 200 && (submitBtn.dataset.user == 'UserRole.STAFF' || submitBtn.dataset.user == 'UserRole.STAFF')) {
+        if (data.status == 200 && (submitBtn.dataset.user == 'UserRole.STAFF' || submitBtn.dataset.user == 'UserRole.ADMIN')) {
             const inputList = document.querySelectorAll('form input')
             Array.from(inputList).forEach(inp => inp.value=null)
             select.value=0

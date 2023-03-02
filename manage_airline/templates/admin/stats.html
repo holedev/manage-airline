@@ -45,7 +45,7 @@
         <td class="" scope="col">{{ d.airport_from.name }} → {{ d.airport_to.name }}</td>
         <td data-price="{{ d.total_price }}" class="price" scope="col">{{ d.total_price }}</td>
         <td scope="col">{{ d.total_ticket }}</td>
-        <td scope="col">{{ d.price_rate or 0 }}</td>
+        <td scope="col">{{ "{:,.2f}".format((d.price_rate)) or 0 }}</td>
     </tr>
     {% endfor %}
     </tbody>

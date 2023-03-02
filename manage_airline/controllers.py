@@ -96,6 +96,7 @@ def pay(f_id):
 
 def create_flight_schedule():
     data = request.get_json()
+    print(data)
     if request.method == 'POST':
         try:
             f = dao.create_flight_sche(airport_from=data['airport_from'], airport_to=data['airport_to'],
@@ -136,13 +137,19 @@ def create_flight_schedule():
 
 def search_flight_schedule():
     data = request.get_json()
-    inp_search = dao.get_inp_search_json(af_id=data['airport_from'], at_id=data['airport_to'],
-                                         time_start=data['time_start'], ticket_type=data['ticket_type'])
-
-    data_search = dao.search_flight_schedule(ap_from=data['airport_from'], ap_to=data['airport_to'],
+    try:
+        inp_search = dao.get_inp_search_json(af_id=data['airport_from'], at_id=data['airport_to'],
                                              time_start=data['time_start'], ticket_type=data['ticket_type'])
-    session['data_search'] = data_search
-    session['inp_search'] = inp_search
+
+        data_search = dao.search_flight_schedule(ap_from=data['airport_from'], ap_to=data['airport_to'],
+                                                 time_start=data['time_start'], ticket_type=data['ticket_type'])
+        session['data_search'] = data_search
+        session['inp_search'] = inp_search
+    except:
+        return {
+            'status': 500,
+            'data': 'error'
+        }
     return {
         'status': 200,
         'data': data_search
@@ -160,18 +167,18 @@ def create_form_ticket(f_id):
         }
     if data['user_role'] == 'UserRole.STAFF' or data['user_role'] == 'UserRole.ADMIN':
         check_time = dao.check_time(data['f_id'], is_user=False)
-        if not check_time:
+        if not check_time['state']:
             return {
                 'status': 500,
-                'data': "Không thể đặt vé cách giờ bay trước 4 tiếng!"
+                'data': "Không thể đặt vé cách giờ bay trước %s tiếng!" % check_time['min']
             }
         pay_ticket(data['f_id'], is_staff=True)
     else:
         check_time = dao.check_time(data['f_id'])
-        if not check_time:
+        if not check_time['state']:
             return {
                 'status': 500,
-                'data': "Không thể đặt vé cách giờ bay trước 12 tiếng!"
+                'data': "Không thể đặt vé cách giờ bay trước %s tiếng!" % check_time['min']
             }
     return {
         'status': 200,
