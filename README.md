@@ -7,7 +7,7 @@
 > How to use:
 
 1. Clone repository and open
-2. Add Interpreter (venv)
+2. Add Interpreter (venv) (File -> Setting -> Project: chat_server -> Python Interpreter -> Add Interperter)
 3. Run in venv `pip install -r requirements.txt`
 4. Edit `.env` (NAME + PASSWORD DATABASE + OAUTH LOGIN GOOGLE) 
 // u need an account in Google Cloud Console to have OAUTH LOGIN
@@ -35,7 +35,6 @@
 - GET LIST
 - CREATE
 - SEARCH
-- ADD
 - DELETE
 
 #### `FORM TICKET`
