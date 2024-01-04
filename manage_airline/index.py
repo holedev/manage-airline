@@ -9,6 +9,9 @@ app.add_url_rule('/callback', 'oauth_callback', controllers.oauth_callback)
 app.add_url_rule('/register', 'register', controllers.register, methods=['get', 'post'])
 app.add_url_rule('/logout', 'logout', controllers.logout)
 
+app.add_url_rule('/webhook', 'webhook', controllers.webhook, methods=['POST'])
+app.add_url_rule('/momo_payment', 'momo_payment', controllers.momo_payment, methods=['POST'])
+
 app.add_url_rule('/flight_list', 'flight_list', controllers.flight_list, methods=['get'])
 app.add_url_rule('/form_ticket/<int:f_id>', 'form_ticket', controllers.form_ticket, methods=['get'])
 app.add_url_rule('/pay/<int:f_id>', 'pay', controllers.pay, methods=['get'])

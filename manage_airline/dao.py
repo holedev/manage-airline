@@ -1,4 +1,8 @@
-from flask import request, session
+import hmac
+import json
+import uuid
+
+from flask import request, session, jsonify
 from sqlalchemy import func, desc, extract, and_
 
 from manage_airline.models import User, Airport, FlightSchedule, BetweenAirport, Ticket, ADMINRules, Customer
@@ -16,6 +20,75 @@ import calendar
 import time
 
 load_dotenv()
+
+
+def webhook():
+    data = request.get_data(as_text=True)
+    signature = request.headers.get('x-api-signature')
+
+    # Xác thực chữ ký từ Momo bằng cách sử dụng secretKey
+    secret_key = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
+    calculated_signature = hmac.new(bytes(secret_key, 'ascii'), bytes(data, 'ascii'), hashlib.sha256).hexdigest()
+    payment_data = json.loads(data)
+    print(payment_data)
+
+    if calculated_signature == signature:
+        # Chữ ký hợp lệ, xử lý thông tin thanh toán
+        payment_data = json.loads(data)
+        print(payment_data)
+
+        return jsonify({"message": "Webhook received!"})
+    else:
+        print("Invalid")
+        return jsonify({"error": "Invalid signature"}), 403
+
+
+def create_momo_payment():
+    endpoint = "https://test-payment.momo.vn/v2/gateway/api/create"
+    partnerCode = "MOMO"
+    accessKey = "F8BBA842ECF85"
+    secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
+    orderInfo = "pay with MoMo"
+    redirectUrl = "https://localhost:5001/api/orders"
+    ipnUrl = "https://localhost:5001/api/orders"
+    amount = "100000"
+    orderId = str(uuid.uuid4())
+    requestId = str(uuid.uuid4())
+    requestType = "captureWallet"
+    extraData = ""
+
+    rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
+
+    h = hmac.new(bytes(secretKey, 'ascii'), bytes(rawSignature, 'ascii'), hashlib.sha256)
+    signature = h.hexdigest()
+
+    data = {
+        'partnerCode': partnerCode,
+        'partnerName': "Test",
+        'storeId': "MomoTestStore",
+        'requestId': requestId,
+        'amount': amount,
+        'orderId': orderId,
+        'orderInfo': orderInfo,
+        'redirectUrl': redirectUrl,
+        'ipnUrl': ipnUrl,
+        'lang': "vi",
+        'extraData': extraData,
+        'requestType': requestType,
+        'signature': signature,
+        'orderExpireTime': 10,
+    }
+
+    print(data)
+
+    data = json.dumps(data)
+
+    clen = len(data)
+    response = requests.post(endpoint,
+                             data=data,
+                             headers={'Content-Type': 'application/json', 'Content-Length': str(clen)})
+
+    return response.json()
 
 
 def get_user_by_id(user_id):

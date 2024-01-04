@@ -1,8 +1,24 @@
+import json
+
 from flask import render_template, redirect, request, session
 from manage_airline import dao, db, flow
 from manage_airline.models import UserRole, User
 from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
+
+
+def momo_payment():
+
+    # Thực hiện tạo chữ ký và gửi yêu cầu thanh toán đến Momo
+    result = dao.create_momo_payment()
+
+    return result
+
+
+def webhook():
+    result = dao.webhook()
+    return result
+
 
 
 def index():
@@ -51,12 +67,14 @@ def register():
 
 def login_oauth():
     authorization_url, state = flow.authorization_url()
+    print(authorization_url)
     return redirect(authorization_url)
 
 
 def oauth_callback():
     try:
         user_oauth = dao.get_user_oauth()
+        print(user_oauth)
         email = user_oauth['email']
         user = User.query.filter_by(username=email).first()
         if user is None:
@@ -70,7 +88,8 @@ def oauth_callback():
         login_user(user)
         if user.user_role == UserRole.ADMIN:
             return redirect('/admin')
-    except:
+    except Exception as err:
+        print(err)
         return redirect("/")
     return redirect("/")
 
