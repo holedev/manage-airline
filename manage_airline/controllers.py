@@ -7,20 +7,6 @@ from flask_login import login_user, logout_user, current_user
 from manage_airline.decorators import anonymous_user
 
 
-def momo_payment():
-
-    # Thực hiện tạo chữ ký và gửi yêu cầu thanh toán đến Momo
-    result = dao.create_momo_payment()
-
-    return result
-
-
-def webhook():
-    result = dao.webhook()
-    return result
-
-
-
 def index():
     airport_list = dao.get_airport_list()
     return render_template('index.html', airport_list=airport_list)
@@ -109,13 +95,24 @@ def form_ticket(f_id):
     return render_template('formTicket.html', f=f, user_role=UserRole)
 
 
+def momo_payment(f_id):
+    if request.method == 'POST':
+        data = request.get_json()
+        result = dao.create_momo_payment(data)
+        return result
+
+
+def webhook():
+    result = dao.webhook()
+    return result
+
+
 def pay(f_id):
     return render_template('pay.html')
 
 
 def create_flight_schedule():
     data = request.get_json()
-    print(data)
     if request.method == 'POST':
         try:
             f = dao.create_flight_sche(airport_from=data['airport_from'], airport_to=data['airport_to'],

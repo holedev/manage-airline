@@ -70,13 +70,18 @@
                 </div>
             </div>
         </div>
-        <button data-user="{{ current_user.user_role }}" data-userId="{{ current_user.get_id() }}" id="submit-btn" class="btn btn-primary mt-4 w-100">
+        <div class="w-100 d-flex justify-content-between mt-4">
+            <button data-user="{{ current_user.user_role }}" data-userId="{{ current_user.get_id() }}" id="submit-btn" class="btn btn-primary w-50">
             {% if current_user.user_role==user_role.USER or not current_user.is_authenticated %}
-            Thanh toán
+            Thanh toán thẻ
             {% else %}
             Thanh toán bằng tiền mặt
             {% endif %}
         </button>
+        <button  data-user="{{ current_user.user_role }}" data-userId="{{ current_user.get_id() }}" id="btn-momo" class="btn btn-info mx-2 w-50">
+            Thanh toán qua Momo
+        </button>
+        </div>
     </form>
     <div class="" style="width: 40%">
         <div style="margin-top: 32px" class="bg-white shadow-sm p-3 rounded-2">

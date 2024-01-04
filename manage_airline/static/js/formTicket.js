@@ -3,6 +3,7 @@ const subBtn = document.querySelector('#sub-customer')
 const submitBtn = document.querySelector('#submit-btn')
 const price = document.querySelector('.price span')
 const select = document.querySelector('form select')
+const momoBtn = document.querySelector('#btn-momo')
 
 function updatePrice(value) {
     const data = price.innerHTML.split(",")
@@ -101,7 +102,6 @@ submitBtn.onclick = (e) => {
 
     const pathNames = window.location.pathname
     const fId = pathNames[pathNames.length - 1]
-    console.log(pathNames)
 
     const data = {
         contact_info: {
@@ -130,7 +130,6 @@ submitBtn.onclick = (e) => {
     })
     .then(res => res.json())
     .then(data => {
-        console.log(data)
         if (data.status == 200 && (submitBtn.dataset.user == 'UserRole.STAFF' || submitBtn.dataset.user == 'UserRole.ADMIN')) {
             const inputList = document.querySelectorAll('form input')
             Array.from(inputList).forEach(inp => inp.value=null)
@@ -158,4 +157,77 @@ submitBtn.onclick = (e) => {
     .catch(err => {
         Swal.fire("Lỗi", err.data, "error")
     })
+}
+
+momoBtn.onclick = (e) => {
+    e.preventDefault()
+
+    const inputList = document.querySelectorAll('form input[required]')
+    const inpErr = Array.from(inputList).find(inp => !inp.value)
+    if (inpErr) {
+        inpErr.focus()
+        return Swal.fire("Lỗi", "Vui lòng nhập đủ thông tin!", "error")
+    }
+
+    const inpValidateErr = Array.from(inputList).find(inp => inp.value.length < inp.getAttribute('minlength'))
+
+    if (inpValidateErr) {
+        inpValidateErr.focus()
+        return Swal.fire("Lỗi", `Vui lòng nhập ít nhất ${inpValidateErr.getAttribute('minlength')} kí tự!`, "error")
+    }
+
+    function findInp(name) {
+        return Array.from(inputList).find(inp => inp.classList.contains(name))
+    }
+
+    const customerInfo = []
+    const quantityCustomner = (inputList.length - 2) / 3
+    Array.from(inputList).forEach((inp, index) => {
+        if (index == 2 || index == 5 || index == 8) {
+            const obj = {
+                id: index,
+                name: inp.value,
+                phone: inputList[index + 1].value,
+                id_customer: inputList[index + 2].value
+            }
+            customerInfo.push(obj)
+        }
+    })
+
+    const pathNames = window.location.pathname
+    const fId = pathNames[pathNames.length - 1]
+
+    const data = {
+        contact_info: {
+            name: findInp('fullname').value,
+            phone: findInp('phone').value
+        },
+        customers_info: [
+            {
+                quantity: customerInfo.length,
+                data: customerInfo
+            }
+        ],
+        package_price: packagePrice,
+        f_id: fId,
+        ticket_type: document.querySelector('span.ticket-type').innerHTML,
+        total: price.innerHTML,
+        u_id: momoBtn.dataset.userid,
+        user_role: momoBtn.dataset.user
+    }
+
+    fetch(`/api/momo_payment/${fId}`, {
+        method: 'post',
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.resultCode === 0) {
+                window.location.href = data.payUrl
+            }
+        })
+
 }
