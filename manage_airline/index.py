@@ -20,8 +20,10 @@ app.add_url_rule('/api/flight_schedule/search', 'search_flight_schedule', contro
                  methods=['post'])
 app.add_url_rule('/api/form_ticket/<int:f_id>', 'create_form_ticket', controllers.create_form_ticket,
                  methods=['post'])
-app.add_url_rule('/api/webhook', 'webhook', controllers.webhook, methods=['POST'])
+# momo
+app.add_url_rule('/api/momo_ipn', 'momo_ipn', controllers.momo_ipn, methods=['POST'])
 app.add_url_rule('/api/momo_payment/<int:f_id>', 'momo_payment', controllers.momo_payment, methods=['POST'])
+
 app.add_url_rule('/api/pay/<int:f_id>', 'pay_ticket', controllers.pay_ticket,
                  methods=['post'])
 app.add_url_rule('/api/flight_schedule/add/<int:f_id>', 'add_flight_schedule', controllers.add_flight_schedule,
@@ -34,6 +36,7 @@ app.add_url_rule('/api/admin_rules', 'create_admin_rules', controllers.create_ad
                  methods=['post'])
 app.add_url_rule('/api/get_stats/<int:month>', 'get_stats', controllers.get_stats,
                  methods=['post'])
+
 
 
 @login.user_loader

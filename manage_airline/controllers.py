@@ -98,12 +98,16 @@ def form_ticket(f_id):
 def momo_payment(f_id):
     if request.method == 'POST':
         data = request.get_json()
+        # xử lý dữ liệu tại đây, ví dụ như lưu tạm vào session
+        # để sau khi thanh toán thành công momo sẽ thông báo qua < def momo_ipn() > bên dưới
+        # bắt sự kiện đó + dữ liệu lưu tạm trong session để lưu dữ liệu xuống db
         result = dao.create_momo_payment(data)
         return result
 
 
-def webhook():
-    result = dao.webhook()
+def momo_ipn():
+    print('Momo ipn receive signal!')
+    result = dao.momo_ipn()
     return result
 
 

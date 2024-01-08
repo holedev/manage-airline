@@ -230,13 +230,21 @@ def get_inp_search_json(af_id, at_id, time_start, ticket_type):
 
 
 def create_momo_payment(data):
+    # https://developers.momo.vn/v3/vi/docs/payment/api/collection-link#kh%E1%BB%9Fi-t%E1%BA%A1o-ph%C6%B0%C6%A1ng-th%E1%BB%A9c-thanh-to%C3%A1n
     # https://github.com/momo-wallet/payment/blob/master/python/MoMo.py
-    endpoint = "https://test-payment.momo.vn/v2/gateway/api/create"
-    redirectUrl = "http://localhost:5001/preview_ticket/" + str(data.get("u_id"))
-    ipnUrl = "http://localhost:5001/api/orders"
-    accessKey = os.environ.get("MOMO_ACCESS_KEY")
-    secretKey = os.environ.get("MOMO_SECRET_KEY")
 
+    endpoint = "https://test-payment.momo.vn/v2/gateway/api/create"
+    # sau khi thanh toán hoàn tất sẽ chuyển về trang bên dưới
+    redirectUrl = "http://localhost:5001/preview_ticket/" + str(data.get("u_id"))
+    # sau khi thanh toán hoàn tất momo sẽ gửi một thông báo về url bên dưới với method post
+    # theo https://github.com/momo-wallet/payment/issues/42, ipnUrl không hỗ trợ localhost
+    # => sử dụng ngrok để tạo một api public như bên dưới (https://ngrok.com/docs/getting-started/?os=windows)
+    # chỉ cần đến step 3 để có url (sử dụng được trên internet), sau đó truy cập vào url đó thay vì localhost:5000
+    # tránh đăng nhập bằng google, do config trong oauth_config.json nên gg sẽ redirect về localhost lại
+    ipnUrl = "https://61e5-113-185-74-124.ngrok-free.app/api/momo_ipn"
+
+    accessKey = "F8BBA842ECF85"
+    secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
     partnerCode = "MOMO"
     orderInfo = "MANAGE AIRLINE | PAY WITH MOMO"
     amount = data.get("total").replace(",", "")
@@ -245,7 +253,9 @@ def create_momo_payment(data):
     requestType = "captureWallet"
     extraData = ""
 
-    rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
+    rawSignature = "accessKey=" + accessKey + "&amount=" + amount + "&extraData=" + extraData + "&ipnUrl=" + ipnUrl \
+                   + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&partnerCode=" + partnerCode \
+                   + "&redirectUrl=" + redirectUrl + "&requestId=" + requestId + "&requestType=" + requestType
 
     h = hmac.new(bytes(secretKey, 'ascii'), bytes(rawSignature, 'ascii'), hashlib.sha256)
     signature = h.hexdigest()
@@ -268,7 +278,6 @@ def create_momo_payment(data):
     }
 
     data = json.dumps(data)
-
     clen = len(data)
     response = requests.post(endpoint,
                              data=data,
@@ -276,25 +285,15 @@ def create_momo_payment(data):
     return response.json()
 
 
-def webhook():
+def momo_ipn():
+    # https://developers.momo.vn/v3/vi/docs/payment/api/result-handling/notification#ipn---instant-payment-notification
+    # lắng nghe thông tin trả về khi thanh toán hoàn tất
+    # kiểm tra session đã lưu so sánh orderId để tạo thông tin tương ứng lưu dưới db
     data = request.get_data(as_text=True)
-    signature = request.headers.get('x-api-signature')
-
-    # Xác thực chữ ký từ Momo bằng cách sử dụng secretKey
-    secret_key = os.environ.get('MOMO_SECRET_KEY')
-    calculated_signature = hmac.new(bytes(secret_key, 'ascii'), bytes(data, 'ascii'), hashlib.sha256).hexdigest()
+    print(data)
     payment_data = json.loads(data)
-    print(payment_data)
 
-    if calculated_signature == signature:
-        # Chữ ký hợp lệ, xử lý thông tin thanh toán
-        payment_data = json.loads(data)
-        print(payment_data)
-
-        return jsonify({"message": "Webhook received!"})
-    else:
-        print("Invalid")
-        return jsonify({"error": "Invalid signature"}), 403
+    return jsonify({"message": payment_data})
 
 
 def check_paypal(number_card, mm_yy, cvc_code, name):
