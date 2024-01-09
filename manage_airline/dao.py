@@ -235,13 +235,13 @@ def create_momo_payment(data):
 
     endpoint = "https://test-payment.momo.vn/v2/gateway/api/create"
     # sau khi thanh toán hoàn tất sẽ chuyển về trang bên dưới
-    redirectUrl = "http://localhost:5001/preview_ticket/" + str(data.get("u_id"))
+    redirectUrl = os.getenv('MOMO_REDIRECT_URI') + str(data.get("u_id"))
     # sau khi thanh toán hoàn tất momo sẽ gửi một thông báo về url bên dưới với method post
     # theo https://github.com/momo-wallet/payment/issues/42, ipnUrl không hỗ trợ localhost
     # => sử dụng ngrok để tạo một api public như bên dưới (https://ngrok.com/docs/getting-started/?os=windows)
     # chỉ cần đến step 3 để có url (sử dụng được trên internet), sau đó truy cập vào url đó thay vì localhost:5000
     # tránh đăng nhập bằng google, do config trong oauth_config.json nên gg sẽ redirect về localhost lại
-    ipnUrl = "https://61e5-113-185-74-124.ngrok-free.app/api/momo_ipn"
+    ipnUrl = os.getenv("MOMO_IPN")
 
     accessKey = "F8BBA842ECF85"
     secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
