@@ -33,7 +33,7 @@ flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
             "openid"],
-    redirect_uri="http://localhost:5001/callback"
+    redirect_uri=os.getenv('OAUTH_REDIRECT_URI')
 )
 
 babel = Babel(app=app)
