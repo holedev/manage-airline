@@ -1,7 +1,6 @@
 import os
 from flask import Flask
 from urllib.parse import quote
-import cloudinary
 from flask_login import LoginManager
 from flask_babelex import Babel
 from flask_sqlalchemy import SQLAlchemy
@@ -27,10 +26,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app=app)
 
 login = LoginManager(app=app)
-
-cloudinary.config(cloud_name=os.getenv('CLOUDINARY_NAME'),
-                  api_key=os.getenv('CLOUDINARY_API_KEY'),
-                  api_secret=os.getenv('CLOUDINARY_API_SECRET'))
 
 # oauth google login
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent.parent, "oauth_config.json")
