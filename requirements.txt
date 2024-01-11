@@ -11,7 +11,7 @@ colorama==0.4.6
 cryptography==38.0.4
 distlib==0.3.6
 filelock==3.8.0
-Flask==2.2.2
+Flask==2.2.5
 Flask-Admin==1.6.0
 Flask-BabelEx==0.9.4
 Flask-Dance==6.2.0
