@@ -52,5 +52,5 @@ toml==0.10.2
 urllib3==1.26.13
 URLObject==2.4.3
 virtualenv==20.17.0
-Werkzeug==2.2.2
+Werkzeug==2.3.8
 WTForms==3.0.1
