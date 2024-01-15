@@ -7,7 +7,8 @@
 > DEMO
 [manage-airline.undefine.tech](https://manage-airline.undefine.tech)
 
-Flow: STAFF create flight list -> ADMIN accept flight list -> USER book ticket.
+Flow: STAFF create flight list -> ADMIN accept flight list -> USER book ticket.\
+Note: Momo payment need download [MOMO UAT](https://developers.momo.vn/v3/vi/docs/payment/onboarding/test-instructions/)
 #### `TEST ACCOUNT`
 - ADMIN: anonymous - 123456
 - STAFF: staff - 123456
