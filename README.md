@@ -2,12 +2,20 @@
 
 ## `PYTHON FLASK` + `BOOTSTRAP 5` + `SQL WORKBENCH`
 
-## Recommend: Python `3.10` + Sql Workbench `8.0.31`
+## Recommend: Python `3.10` + Sql Workbench `8.0.31` + Pycharm IDE
 
-> How to use:
+> DEMO
+[manage-airline.undefine.tech](https://manage-airline.undefine.tech)
+
+Flow: STAFF create flight list -> ADMIN accept flight list -> USER book ticket.
+#### `TEST ACCOUNT`
+- ADMIN: anonymous - 123456
+- STAFF: staff - 123456
+- USER: user - 123456
+> How to use (dev + tester):
 
 1. Clone repository and open
-2. Add Interpreter (venv) (File -> Setting -> Project: manage-airline -> Python Interpreter -> Add Interperter)
+2. Add Interpreter (venv) (Pycharm: File -> Setting -> Project: manage-airline -> Python Interpreter -> Add Interperter)
 3. Run in venv `pip install -r requirements.txt`
 4. Edit `.env` (NAME + PASSWORD DATABASE + OAUTH LOGIN GOOGLE) 
 // u need an account in Google Cloud Console to have OAUTH LOGIN
@@ -15,14 +23,7 @@
 6. Run `index.py`
 7. ![image](https://user-images.githubusercontent.com/82250843/205350973-a6013ae6-10f3-46b9-8f22-58ba40cda29d.png)
 
-> Description:
-### Phần mềm quản lý chuyến bay bao gồm các dịch vụ:
-1. Khách hàng: Đăng nhập, đăng ký, đặt vé online, tra cứu chuyến bay, thanh toán trực tuyến (coming soon)
-2. Nhân viên: Tra cứu vé, lập lịch chuyến bay, nhập thông tin chuyến bay, xuất vé máy bay.
-3. Quản trị viên: thay đổi quy định chuyến bay, xem thống kê báo cáo, quản lý chuyến bay.
-
-> CORE Concepts: (U can see all in index.py)
-
+> CORE Concepts (All in index.py)
 #### `AUTHENTICATION`
 
 - LOGIN
